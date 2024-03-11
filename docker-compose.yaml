@@ -1,0 +1,26 @@
+version: '8'
+
+services:
+  zeppelin:
+    image: zeppelin
+    container_name: zeppelin # Change container name if conflicting
+    build:
+      context: .
+    environment:
+      FLINK_HOME: /opt/flink
+      SPARK_HOME: /opt/spark
+      ZEPPELIN_LOG_DIR: /logs
+      ZEPPELIN_NOTEBOOK_DIR: /notebook 
+    volumes:
+      - ./logs:/logs
+      - ./notebook:/notebook                    # notebook folder in main project : path in docker
+      - ./spark-3.2.1-bin-hadoop3.2:/opt/spark  # spark folder in main project : path in docker
+      - ./flink-1.18.1:/opt/flink               # flink folder in main project : path in docker
+    ports:
+      - 8080:8080
+    hostname: localhost # You can change it into "zeppelin.local" and add into /etc/hosts
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
