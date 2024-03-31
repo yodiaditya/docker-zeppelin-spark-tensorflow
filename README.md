@@ -24,8 +24,7 @@ Several key features in this repository to help you learning :
 
 ### 1. Clone this project
 
-`git clone https://github.com/yodiaditya/docker-zeppelin-spark-torch.git` 
-
+`git clone https://github.com/yodiaditya/docker-zeppelin-spark-torch.git`
 
 ### 2. Download Latest Spark (3.1.2) 
 
@@ -38,9 +37,9 @@ Download at here: <https://www.apache.org/dyn/closer.lua/flink/flink-1.18.1/flin
 tar xvf flink-1.18.1-bin-scala_2.12.tgz
 ```
 
-### 4. Docker Installation 
+### 4. Docker Installation on Ubuntu
 
-```snap install docker```
+Follow this Docker CE installation : <https://docs.docker.com/engine/install/ubuntu/>
 
 #### Running docker without `root`
 
@@ -49,21 +48,51 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
+## Docker config for Zeppelin
+
+Docker Configuration <https://zeppelin.apache.org/docs/latest/quickstart/docker.html>
+
+Because DockerInterpreterProcess communicates via docker's tcp interface.
+By default, docker provides an interface as a sock file, so you need to modify the configuration file to open the tcp interface remotely.
+
+To listen on both - socket and tcp:
+
+create folder: /etc/systemd/system/docker.socket.d
+create file 10-tcp.conf inside the folder with the content:
+
+```
+[Socket]
+ListenStream=0.0.0.0:2375
+```
+
+restart everything:
+
+```
+systemctl daemon-reload
+systemctl stop docker.socket
+systemctl stop docker.service
+systemctl start docker
+```
+
+Plus are: it us user space systemd drop-in, i.e. would not disappear after upgrade of the docker
+would allow to use both - socket and tcp connection
+
+
 #### If there is DNS issue when download 
-Add `1.1.1.1` or `8.8.8.8` in `/var/snap/docker/current/config/daemon.json` and `/var/snap/docker/current/etc/docker/daemon.json` 
+Add `1.1.1.1` or your local DNS in `/etc/docker/daemon.json`
 
 ```
 {
-  "dns": ["8.8.8.8", "1.1.1.1"],
-  "hosts": ["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"]
+  "dns": ["192.168.18.1", "1.1.1.1"]
 }
 ```
 
 ## III. Build the Docker
 
-Add packages you want to install like Tensorflow, Jupyter, etc into requirements.txt 
+Add packages you want to install like Tensorflow, Jupyter, etc into `requirements.txt` in the project folder 
 
 #### Build
+
 ```
 docker compose up --build
 ```

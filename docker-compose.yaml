@@ -21,7 +21,7 @@ services:
       - 9999:9999
     hostname: zeppelin.local # You can change it into "zeppelin.local" and add into /etc/hosts
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      test: ["CMD", "curl", "-f", "http://localhost:9999"]
       interval: 10s
       timeout: 5s
       retries: 3
