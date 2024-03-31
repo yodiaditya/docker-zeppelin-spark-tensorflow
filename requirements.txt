@@ -3,3 +3,6 @@ pandas
 sentence-transformers
 jupyter
 ipywidgets
+numpy
+matplotlib
+seaborn

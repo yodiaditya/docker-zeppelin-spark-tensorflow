@@ -27,13 +27,10 @@ Several key features in this repository to help you learning :
 `git clone https://github.com/yodiaditya/docker-zeppelin-spark-torch.git` 
 
 
-### 2. Download Latest Spark (3.5.1) 
+### 2. Download Latest Spark (3.1.2) 
 
-Download the latest Spark at here: <https://www.apache.org/dyn/closer.lua/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz>
-Extract the archive file into main project folder: 
-```sh
-tar xvf spark-3.5.1-bin-hadoop3.tgz
-```
+Download the at <https://archive.apache.org/dist/spark/spark-3.1.2/> and extract the archive file into main project folder. 
+Why using this version instead of 3.3/3.4/3.5? Because there is incompatibility issues with scala. 
 
 ### 3. Download Latest Flink (3.5.1) 
 Download at here: <https://www.apache.org/dyn/closer.lua/flink/flink-1.18.1/flink-1.18.1-bin-scala_2.12.tgz> and extract.
@@ -100,6 +97,12 @@ Run the docker with :
 docker-compose up
 ```
 
-Visit http://localhost:8080 and use login `admin` : `password` (change this in `zeppelin/conf/shiro.ini`) 
+Visit <http://localhost:9999> to open the Zeppelin.
+
+
+## VI. Using Login Shiro
+Rename the file `default-shiro.ini` into `shiro.ini` and restart docker.
+
+Use login `admin` : `password` (change this in `zeppelin/conf/shiro.ini`) 
 If you are using VS Code Zeppelin extension, you can use this login auth account.
 
