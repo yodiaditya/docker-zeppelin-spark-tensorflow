@@ -1,4 +1,4 @@
-FROM apache/zeppelin:0.11.0
+FROM apache/zeppelin:0.10.1
 
 # Zeppelin home location inside docker
 ENV ZEPPELIN_HOME=/opt/zeppelin
@@ -14,10 +14,14 @@ WORKDIR ${ZEPPELIN_HOME}
 
 COPY pip-cache ${ZEPPELIN_HOME}/pip-cache
 
+# Install GCC
+# RUN apt update && apt install -y gcc git
+
+# RUN conda init bash
 RUN conda init bash
-SHELL ["/bin/bash", "-c", "source .bashrc"]
+SHELL ["/bin/bash", "-c", "source /opt/zeppelin/.bashrc"]
+
 RUN conda activate python_3_with_R
 
-# Activate the conda environment use for Zeppelin (python_3_with_R)
-# SHELL ["conda", "run", "-n", "venv", "/bin/bash", "-c"]
-RUN pip install -r requirements.txt --cache-dir ${ZEPPELIN_HOME}/pip-cache
+# # Activate the conda environment use for Zeppelin (python_3_with_R)
+RUN pip install --cache-dir pip-cache -r requirements.txt
