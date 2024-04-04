@@ -81,12 +81,11 @@ systemctl start docker
 Plus are: it us user space systemd drop-in, i.e. would not disappear after upgrade of the docker
 would allow to use both - socket and tcp connection
 
-
 #### If there is DNS issue when download 
-You can enable another DNS at `/etc/default/docker` and un-comment this part
+You can enable another DNS at `/etc/docker/daemon.json` and add your local DNS or Google DNS
 
 ```
-#DOCKER_OPTS="--dns 8.8.8.8 --dns 8.8.4.4"
+{ "dns" : [ "114.114.114.114" , "8.8.8.8" ] } 
 ```
 
 ## 3. Build the Docker
@@ -185,12 +184,6 @@ Run this to test whether its works.
 sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 ```
 
-If not, running the docker and go inside it `docker exec -it zeppelin bash`
-
-```
-wget -c https://us.download.nvidia.com/XFree86/Linux-x86_64/550.67/NVIDIA-Linux-x86_64-550.67.run --accept-license --ui=none --no-kernel-module --no-questions 
-```
-
 ## 9. Install
 Change the `docker-compose.yaml` and un-comment this
 
@@ -207,3 +200,8 @@ Change the `docker-compose.yaml` and un-comment this
 You can read details at <https://docs.docker.com/compose/gpu-support/>
 
 
+If not, running the docker and go inside it `docker exec -it zeppelin bash`
+
+```
+wget -c https://us.download.nvidia.com/XFree86/Linux-x86_64/550.67/NVIDIA-Linux-x86_64-550.67.run --accept-license --ui=none --no-kernel-module --no-questions 
+```
