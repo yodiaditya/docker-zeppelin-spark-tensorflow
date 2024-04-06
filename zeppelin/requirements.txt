@@ -1,0 +1,11 @@
+scikit-learn
+pandas 
+rankfm
+jupyter
+ipywidgets
+numpy
+matplotlib
+seaborn
+xgboost
+# sentence-transformers
+numba

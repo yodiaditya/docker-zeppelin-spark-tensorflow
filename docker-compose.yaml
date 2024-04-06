@@ -1,25 +1,47 @@
-version: '16'
+version: '5'
 
 services:
-  zeppelin:
-    image: zeppelin
-    container_name: zeppelin # Change container name if conflicting
-    build:
-      context: .
-    environment:
-      # FLINK_HOME: /opt/flink
-      SPARK_HOME: /opt/spark
-      ZEPPELIN_LOG_DIR: /opt/zeppelin/logs
-      ZEPPELIN_NOTEBOOK_DIR: /opt/zeppelin/notebook 
-    volumes:
-      - ./logs:/logs
-      - ./notebook:/opt/zeppelin/notebook       # notebook folder in main project : path in docker
-      - ./spark-3.1.2-bin-hadoop3.2:/opt/spark  # spark folder in main project : path in docker
-      # - ./flink-1.18.1:/opt/flink               # flink folder in main project : path in docker
-      - ./logs:/opt/zeppelin/logs               # flink folder in main project : path in docker
+  spark-master:
+    build: spark
+    container_name: spark-master
+    hostname: spark-master
     ports:
-      - 9999:9999
+      - "8080:8080"
+    environment:
+      - SPARK_MASTER_HOST=spark-master
+    volumes:
+      - spark-binaries:/opt/bitnami/spark
+
+  spark-worker1:
+    build: spark
+    container_name: spark-worker1
+    hostname: spark-worker1
+    links:
+      - spark-master
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=8
+      - SPARK_WORKER_MEMORY=10g
+
+  zeppelin:
+    build: zeppelin
+    container_name: zeppelin
     hostname: zeppelin.local # You can change it into "zeppelin.local" and add into /etc/hosts
+    ports:
+      - "9999:8080"
+    links:
+      - spark-master
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_HOME: /opt/bitnami/spark
+      ZEPPELIN_LOG_DIR: /opt/zeppelin/logs
+      ZEPPELIN_NOTEBOOK_DIR: /opt/zeppelin/notebook
+    volumes:
+      - spark-binaries:/opt/bitnami/spark
+      - ./notebook:/opt/zeppelin/notebook       # notebook folder in main project : path in docker
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9999"]
       interval: 10s
@@ -32,3 +54,5 @@ services:
           - driver: nvidia
             device_ids: ['0']
             capabilities: [gpu]
+volumes:
+  spark-binaries:
