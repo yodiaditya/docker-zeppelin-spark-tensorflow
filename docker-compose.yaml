@@ -42,6 +42,7 @@ services:
     volumes:
       - spark-binaries:/opt/bitnami/spark
       - ./notebook:/opt/zeppelin/notebook       # notebook folder in main project : path in docker
+      - "./data:/data" # put any data like CSV, Parquet, etc. in this folder and access it via /data/... in Zeppelin
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9999"]
       interval: 10s

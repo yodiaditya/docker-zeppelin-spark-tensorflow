@@ -1,11 +1,10 @@
 scikit-learn
-pandas 
-rankfm
+pandas
 jupyter
 ipywidgets
 numpy
 matplotlib
 seaborn
 xgboost
-# sentence-transformers
 numba
+scipy
