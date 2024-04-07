@@ -8,11 +8,8 @@ ENV SPARK_HOME /opt/bitnami/spark
 ENV TZ=UTC \
     DEBIAN_FRONTEND=noninteractive
 
-USER root
+USER 1000
 
 # Copy pip-cache folder from host to Docker
 # Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
 COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
-RUN chown -R 1000:1000 ${ZEPPELIN_HOME}/pip-cache
-
-USER 1000
