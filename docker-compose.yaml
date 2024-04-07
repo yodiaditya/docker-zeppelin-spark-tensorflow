@@ -26,7 +26,10 @@ services:
       - SPARK_WORKER_MEMORY=10g
 
   zeppelin:
-    build: zeppelin
+    build: 
+      context: zeppelin
+      dockerfile: Dockerfile        # Use this line if want to build from scratch
+      # dockerfile: Dockerfile_hub  # Use this line if you want to use the pre-built image from Docker Hub
     container_name: zeppelin
     hostname: zeppelin.local # You can change it into "zeppelin.local" and add into /etc/hosts
     ports:

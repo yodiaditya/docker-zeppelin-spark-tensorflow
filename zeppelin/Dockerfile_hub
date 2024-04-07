@@ -1,0 +1,1 @@
+FROM yodiaditya/zeppelin-tensorflow-tfx:latest

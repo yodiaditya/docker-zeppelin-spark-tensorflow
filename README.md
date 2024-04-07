@@ -1,17 +1,46 @@
 # Docker Zeppelin + Spark + Tensorflow and TFX
-Repository to create spark/zeppelin development environment. Works with NVIDIA GPU attached
-To recreate environment, install Docker and docker-compose, clone repository and run:
+Repository to create spark/zeppelin development environment. Works with NVIDIA GPU attached.
+This will running Spark Master and Node to replicate near production environment.
+
+You can extend this with Zeppelin, Spark, Flink, DuckDB, Parquet, Tensorflow, PyTorch and many more.
+This already tested with local PC and laptop running on Ubuntu 23.10 and RTX 4090
+
+## Quickstart 
+Assuming you already have NVIDIA GPU works with Cuda 11.8, Use the pre-built image.
+Modify the `docker-compose.yaml` and enable `dockerfile: Dockerfile_hub` eg:
+
+```
+build: 
+      context: zeppelin
+      # dockerfile: Dockerfile        # Use this line if want to build from scratch
+      dockerfile: Dockerfile_hub  # Use this line if you want to use the pre-built image from Docker Hub
+```
+
+After modify the file, you can run it:
 
 ```
 docker-compose up -d --build
 ```
 
 To access services use:
-- Spark master: http://localhost:8080
-- Zeppelin: http://localhost:9999
+- Spark master: <http://localhost:8080>
+- Zeppelin: <http://localhost:9999>
 
-You can extend this with Zeppelin, Spark, Flink, DuckDB, Parquet, Tensorflow, PyTorch and many more.
-This already tested with local PC and laptop running on Ubuntu 23.10 and RTX 4090
+
+## Docker Access
+Root Login (For apt install and other root permission)
+```
+docker exec -u 0 -it zeppelin bash
+```
+
+User Login (For pip installation etc)
+```
+docker exec -it zeppelin bash
+```
+
+You can login and do `nvtop` to see whether GPU is detected.
+
+# Build from Scratch 
 
 ## 1. Features 
 
@@ -203,3 +232,13 @@ You can run both TFX or Training Tensorflow models on Zeppelin + Spark
 
 ![Zeppelin Docker Tensorflow](ss.png?raw=true "Docker Zeppelin Tensorflow")
 
+
+## 10. Push the modification into Hub and reduce the Docker image size 
+
+Install slim <https://github.com/slimtoolkit/slim> and then you can follow these steps:
+
+```
+slim build zeppelin-zeppelin
+docker login
+docker images 
+docker image tag <REPLACE_WITH_IMAGE_ID> yodiaditya/zeppelin-tensorflow-tfx:latest

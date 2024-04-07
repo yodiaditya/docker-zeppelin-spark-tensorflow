@@ -13,9 +13,9 @@ USER root
 # You can change the apt source to a faster mirror. 
 # This is an example for Indonesian mirror
 
-# RUN rm -rf /etc/apt/sources.list
-# RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list
-# RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal-security main restricted universe multiverse" >> /etc/apt/sources.list
+RUN rm -rf /etc/apt/sources.list
+RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list
+RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal-security main restricted universe multiverse" >> /etc/apt/sources.list
 
 ENV PIP_CACHE_DIR=/var/cache/buildkit/pip
 RUN mkdir -p $PIP_CACHE_DIR
@@ -65,6 +65,8 @@ RUN cp -P cuda/cudnn/include/cudnn.h /usr/local/cuda/include
 RUN cp -P cuda/cudnn/lib/libcudnn* /usr/local/cuda/lib64/
 RUN chmod a+r /usr/local/cuda-11.8/lib64/libcudnn*
 
+RUN rm -rf cuda
+
 # Ensure cuda is added to the PATH, since ~./bashrc is not loaded
 ENV PATH /usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH /usr/local/cuda/lib:/usr/local/cuda/lib64
@@ -90,12 +92,14 @@ RUN pip install --cache-dir pip-cache -r requirements.txt
 # Install TFX
 RUN pip install --cache-dir pip-cache -r tfx_requirements.txt
 RUN pip uninstall shapely -y
-
+RUN rm -rf pip-cache
 ################## END TFX Installation #################
 
-USER root 
-
-RUN rm -r pip-cache
-RUN rm -r cuda
-
 USER 1000
+
+EXPOSE 8080
+
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
+
+WORKDIR ${ZEPPELIN_HOME}
+CMD ["bin/zeppelin.sh"]
