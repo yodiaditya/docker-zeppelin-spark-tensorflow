@@ -31,3 +31,6 @@ grpcio-status==1.48.2
 jupyterlab-pygments==0.2.2
 jupyterlab-widgets==1.1.1
 jupyter-server==1.23.1
+tensorflow-recommenders
+tensorflow-datasets
+apache-beam[interactive]
