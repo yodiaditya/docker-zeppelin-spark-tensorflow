@@ -13,9 +13,9 @@ USER root
 # You can change the apt source to a faster mirror. 
 # This is an example for Indonesian mirror
 
-RUN rm -rf /etc/apt/sources.list
-RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list
-RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal-security main restricted universe multiverse" >> /etc/apt/sources.list
+# RUN rm -rf /etc/apt/sources.list
+# RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list
+# RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal-security main restricted universe multiverse" >> /etc/apt/sources.list
 
 ENV PIP_CACHE_DIR=/var/cache/buildkit/pip
 RUN mkdir -p $PIP_CACHE_DIR
@@ -23,7 +23,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean
 RUN --mount=type=cache,target=/var/cache/apt \
         	apt-get update && \
 	        apt-get install -yqq --no-install-recommends \
-            libnss-wrapper gcc git wget vim build-essential libxml2 nvtop 
+            libnss-wrapper gcc git wget vim build-essential libxml2 nvtop rsync
 
 # Add libnss_wrapper.so to the common lib directory to avoid errors when running Zepplin as non-root user
 RUN mkdir -p /opt/bitnami/common/lib/
@@ -95,11 +95,4 @@ RUN pip uninstall shapely -y
 RUN rm -rf pip-cache
 ################## END TFX Installation #################
 
-USER 1000
-
 EXPOSE 8080
-
-ENTRYPOINT [ "/usr/bin/tini", "--" ]
-
-WORKDIR ${ZEPPELIN_HOME}
-CMD ["bin/zeppelin.sh"]

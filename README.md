@@ -242,3 +242,4 @@ slim build zeppelin-zeppelin
 docker login
 docker images 
 docker image tag <REPLACE_WITH_IMAGE_ID> yodiaditya/zeppelin-tensorflow-tfx:latest
+```
