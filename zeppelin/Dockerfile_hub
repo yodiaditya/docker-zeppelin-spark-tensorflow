@@ -1,10 +1,12 @@
-FROM yodiaditya/zeppelin-tensorflow-tfx
+FROM yodiaditya/zeppelin-tensorflow-tfx:latest
 
 ENV ZEPPELIN_HOME=/opt/zeppelin
 ENV ZEPPELIN_NOTEBOOK_DIR /notebooks
 ENV ZEPPELIN_INTERPRETER_DEP_MVNREPO https://repo1.maven.org/maven2/
 ENV ZEPPELIN_ADDR 0.0.0.0
 ENV SPARK_HOME /opt/bitnami/spark
+ENV ZEPPELIN_LOG_DIR=opt/zeppeli/logs
+
 ENV TZ=UTC \
     DEBIAN_FRONTEND=noninteractive
 
@@ -13,3 +15,5 @@ USER 1000
 # Copy pip-cache folder from host to Docker
 # Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
 COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
+
+# CMD ["bin/zeppelin.sh"]

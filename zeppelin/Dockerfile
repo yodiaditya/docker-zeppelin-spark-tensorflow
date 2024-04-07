@@ -7,23 +7,24 @@ ENV ZEPPELIN_ADDR 0.0.0.0
 ENV SPARK_HOME /opt/bitnami/spark
 ENV TZ=UTC \
     DEBIAN_FRONTEND=noninteractive
+ENV ZEPPELIN_LOG_DIR=opt/zeppeli/logs
 
 USER root
 
 # You can change the apt source to a faster mirror. 
 # This is an example for Indonesian mirror
-
 # RUN rm -rf /etc/apt/sources.list
 # RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list
 # RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal-security main restricted universe multiverse" >> /etc/apt/sources.list
 
-ENV PIP_CACHE_DIR=/var/cache/buildkit/pip
-RUN mkdir -p $PIP_CACHE_DIR
 RUN rm -f /etc/apt/apt.conf.d/docker-clean
 RUN --mount=type=cache,target=/var/cache/apt \
         	apt-get update && \
 	        apt-get install -yqq --no-install-recommends \
-            libnss-wrapper gcc git wget vim build-essential libxml2 nvtop rsync
+            libnss-wrapper gcc git wget vim build-essential libxml2 nvtop rsync tini libarchive13
+
+RUN  mkdir -p ${ZEPPELIN_HOME}/logs \
+    && mkdir -p ${ZEPPELIN_HOME}/run
 
 # Add libnss_wrapper.so to the common lib directory to avoid errors when running Zepplin as non-root user
 RUN mkdir -p /opt/bitnami/common/lib/
@@ -37,18 +38,13 @@ RUN chmod -R 777 ${ZEPPELIN_NOTEBOOK_DIR}
 
 # Copy pip-cache folder from host to Docker
 # Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
-COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
-RUN chown -R 1000:1000 ${ZEPPELIN_HOME}/pip-cache
+# COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
+# RUN chown -R 1000:1000 ${ZEPPELIN_HOME}/pip-cache
 
 # Copy the configuration files and requirements.txt
 COPY ./conf/zeppelin-env.sh ${ZEPPELIN_HOME}/conf/zeppelin-env.sh
 COPY ./requirements.txt ${ZEPPELIN_HOME}/requirements.txt
 COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
-
-# Setup conda and auto load environment `python_3_with_R` whenever login 
-ENV PATH /opt/conda/envs/python_3_with_R/bin:$PATH
-COPY ./bashrc ${ZEPPELIN_HOME}/.bashrc
-RUN chown 1000:1000 ${ZEPPELIN_HOME}/.bashrc
 
 ################# CUDA INSTALLATION #################
 # COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE CUDA 
@@ -64,7 +60,6 @@ RUN cuda/cuda_11.8.0_520.61.05_linux.run --silent --toolkit
 RUN cp -P cuda/cudnn/include/cudnn.h /usr/local/cuda/include
 RUN cp -P cuda/cudnn/lib/libcudnn* /usr/local/cuda/lib64/
 RUN chmod a+r /usr/local/cuda-11.8/lib64/libcudnn*
-
 RUN rm -rf cuda
 
 # Ensure cuda is added to the PATH, since ~./bashrc is not loaded
@@ -78,21 +73,47 @@ RUN ldconfig
 
 ################# End Install CUDA #################
 
+################## INSTALL MAMBA AND PYTHON 3.9 #################
+
+RUN wget --remote-encoding=utf-8 -qO- https://micromamba.snakepit.net/api/micromamba/linux-64/latest | tar -xvj bin/micromamba 
+COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
+
+RUN apt-get update && \
+    conda update --all && \
+    conda install mamba -c conda-forge && \
+    mamba remove -n python_3_with_R --all -y && \
+    mamba env update -f ${ZEPPELIN_HOME}/env_python_3_with_R.yml --prune && \
+    # Cleanup based on https://github.com/ContinuumIO/docker-images/commit/cac3352bf21a26fa0b97925b578fb24a0fe8c383
+    find /opt/conda/ -follow -type f -name '*.a' -delete && \
+    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+    mamba clean -ay
+    # Allow to modify conda packages. This allows malicious code to be injected into other interpreter sessions, therefore it is disabled by default
+    # chmod -R ug+rwX /opt/conda
+
+# ENV PATH=/opt/conda/envs/python_3_with_R/bin:$PATH
+###################### END MAMBA AND PYTHON 3.9 ######################
+
+# Setup conda and auto load environment `python_3_with_R` whenever login 
+COPY ./bashrc ${ZEPPELIN_HOME}/.bashrc
+RUN chown 1000:1000 ${ZEPPELIN_HOME}/.bashrc
+
 # Change the user back to zeppelin
 USER 1000
 
 # Install the required packages. You can modify the requirements.txt file to include the packages you need.
 # At first run, you can run the following command to install the packages
 # the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
+
+RUN mkdir -p ${ZEPPELIN_HOME}/pip-cache
 RUN pip install --cache-dir pip-cache -r requirements.txt
 
 ################## Install TFX #################
 ## COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE TFX 
 
-# Install TFX
+# # Install TFX
 RUN pip install --cache-dir pip-cache -r tfx_requirements.txt
 RUN pip uninstall shapely -y
-RUN rm -rf pip-cache
+# RUN rm -rf pip-cache
 ################## END TFX Installation #################
 
 EXPOSE 8080
