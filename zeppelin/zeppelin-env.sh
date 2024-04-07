@@ -1,2 +1,0 @@
-export ZEPPELIN_MEM="-Xms1024m -Xmx2048m"
-export ZEPPELIN_INTP_MEM="-Xms1024m -Xmx2048m"

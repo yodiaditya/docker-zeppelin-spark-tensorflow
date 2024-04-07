@@ -1,6 +1,7 @@
-# Docker Zeppelin Spark Torch Tensorflow 
+# Docker Zeppelin Spark Torch Tensorflow and TFX
 Repository to create spark/zeppelin development environment. Works with NVIDIA GPU attached
 To recreate environment, install Docker and docker-compose, clone repository and run:
+
 ```
 docker-compose up -d --build
 ```
@@ -18,13 +19,11 @@ Several key features in this repository to help you learning :
 
 - Re-use `pip cache` for Docker build instead re-downloading python modules
 - Copy your Zeppelin or IPYNB in `notebook` folder and linked into Zeppelin in docker
-- Works with latest version of Zeppelin 0.11.0, Spark 3.5, Hadoop
-- Simple DockerFile and docker-compose-yaml configuration 
-- Enable health status of docker 
-- Easy to add new packages in `requirements.txt`
+- Easy to add new packages in `requirements.txt` and TFX support on `tfx_requirements.txt`
 - Zeppelin configuration located at `zeppelin/conf` 
-- Add more softwares and modify `docker-compose.yaml`
-- Integrated with your NVIDIA GPU (single or all!)
+- CUDA and CUDNN installed and integrated with Zeppelin Docker (you can disable this)
+- Auto Conda activate environment when login via `docker exec -it zeppelin bash` (setup on `~/.bashrc`)
+- Login root using `docker exec -u 0 -it zeppelin bash` for any `apt` or other root access
 
 ## 2. Getting Started
 
@@ -80,51 +79,27 @@ You can enable another DNS at `/etc/docker/daemon.json` and add your local DNS o
 { "dns" : [ "114.114.114.114" , "8.8.8.8" ] } 
 ```
 
-## 3. Build the Docker
+## 3. Configure Zeppelin
 
-Add packages you want to install like Tensorflow, Jupyter, etc into `requirements.txt` in the project folder 
+Add packages you want to install like Tensorflow, Jupyter, etc into `zeppelin/requirements.txt` in the project folder.
 
-#### Build and Run the Docker
-
-```
-docker compose up --build
-```
-
-#### Install Python Packages from inside Docker 
-
-```
-docker exec -u root -it zeppelin bash
-```
-
-Then to install python packages
-
-```
-conda activate python_3_with_R
-pip install --cache-dir pip-cache -r requirements.txt
-```
-
-Python packages download stored into `pip-cache` folder. 
-To avoid re-download everything, we copy it back to our host, which can be re-used later.
-
-## 4. Cache Pip Python Package  
-
-Since the packages in `requirements.txt` is more than 2GB, it will takes times to download every build. We can cache it and here are the step. While the docker is running, open new tab and go to project folder. 
+Python packages download stored into `pip-cache` folder both in `zeppelin` project and host `/opt/zeppelin`.
+To avoid re-download everything, copy it back to our host, which can be re-used later.
 
 1. Get the docker container ID with `docker ps`
-2. Copy `pip-cache` from `/opt/zeppelin` inside docker to host (main project folder) 
+2. Copy `pip-cache` from `/opt/zeppelin` inside docker to `zeppelin` folder in project. 
 
 ```
 docker ps 
-docker cp REPLACE_THIS_WITH_CONTAINER_ID_NUMBER:/opt/zeppelin/pip-cache .
+docker cp REPLACE_THIS_WITH_CONTAINER_ID_NUMBER:/opt/zeppelin/pip-cache zeppelin/
 ```
 
 Now, everytime `docker compose up --build`, pip will use `pip-cache` folder in main project.
-You only need to do pip installation inside docker only one time. 
 
-## 5. Using Login Shiro
+## 4. Using Login Shiro
 Create `shiro.ini` and copy into `/opt/zeppelin/conf` via Dockerfile.
 
-## 6. Docker GPU Installation 
+## 5. Docker GPU Installation 
 This steps required to enable GPU in the docker
 <https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-apt>
 
@@ -147,25 +122,22 @@ sudo nvidia-ctk runtime configure --runtime=docker
 sudo systemctl restart docker
 ```
 
-## 7. Test 
-
 Run this to test whether its works. 
 
 ```
 sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 ```
 
-## 8. Install
-Change the `docker-compose.yaml` and un-comment this
+This will enabled in `docker-compose.yaml` on zeppelin section:
 
 ```
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #       - driver: nvidia
-    #         device_ids: ['0']
-    #         capabilities: [gpu]
+deploy:
+  resources:
+    reservations:
+      devices:
+      - driver: nvidia
+        device_ids: ['0']
+        capabilities: [gpu]
 ```
 
 You can read details at <https://docs.docker.com/compose/gpu-support/>
@@ -176,3 +148,38 @@ If not, running the docker and go inside it `docker exec -it zeppelin bash`
 ```
 wget -c https://us.download.nvidia.com/XFree86/Linux-x86_64/550.67/NVIDIA-Linux-x86_64-550.67.run --accept-license --ui=none --no-kernel-module --no-questions 
 ```
+
+## 6. CUDA and CUDNN Installation in Docker Zeppelin
+I'm using CUDA 11.8 and RTX 3060 / 4090 for this example. We need to download the installation
+
+Start from main project folder
+```
+cd zeppelin
+mkdir cuda && cd cuda
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+```
+
+Next, download CUDNN 8.9.7 and extract it as folder `cudnn`
+
+```
+wget https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.7/local_installers/11.x/cudnn-linux-x86_64-8.9.7.29_cuda11-archive.tar.xz
+tar -xvvf cudnn-linux-x86_64-8.9.7.29_cuda11-archive.tar.xz
+mv cudnn-linux-x86_64-8.9.7.29_cuda11-archive cudnn
+```
+
+You can see in `zeppelin/Dockerfile` there is operation to copy this into Docker and set installation
+
+## 7. TFX Installation
+
+For Recommendation System and using TFX, the separated requirements located at `zeppelin/tfx_requirements.txt`
+
+
+## 8. Notes
+You can modify and doing installation inside the Docker:
+
+`pip install --cache-dir pip-cache -r requirements.txt`
+
+For any APT installs, you can use the following command: 
+`docker exec -u 0 -it zeppelin bash -c "apt-get update && apt-get install -yqq --no-install-recommends <package-name>`
+
+or login with -u 0 to run as root

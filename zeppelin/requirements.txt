@@ -8,3 +8,5 @@ seaborn
 xgboost
 numba
 scipy
+tfx
+tensorflow==2.9.2
