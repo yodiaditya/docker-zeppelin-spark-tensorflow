@@ -1,4 +1,4 @@
-# Docker Zeppelin Spark Torch Tensorflow and TFX
+# Docker Zeppelin + Spark + Tensorflow and TFX
 Repository to create spark/zeppelin development environment. Works with NVIDIA GPU attached
 To recreate environment, install Docker and docker-compose, clone repository and run:
 
@@ -36,6 +36,19 @@ Several key features in this repository to help you learning :
 Follow this Docker CE installation : <https://docs.docker.com/engine/install/ubuntu/>. 
 Don't use `snap` because NVIDIA Toolkit only works with Docker CE
 
+If you received weird NVIDIA errors when running the dockers,
+Suggested to uninstall everything and re-install Docker CE. Here are the steps:
+
+```
+sudo snap remove --purge docker
+sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do sudo apt-get remove $pkg; done
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl restart docker
+
+```
 #### Running docker without `root` permission
 
 ```
@@ -183,3 +196,10 @@ For any APT installs, you can use the following command:
 `docker exec -u 0 -it zeppelin bash -c "apt-get update && apt-get install -yqq --no-install-recommends <package-name>`
 
 or login with -u 0 to run as root
+
+
+## 9. Voila!
+You can run both TFX or Training Tensorflow models on Zeppelin + Spark
+
+![Zeppelin Docker Tensorflow](ss.png?raw=true "Docker Zeppelin Tensorflow")
+

@@ -8,4 +8,4 @@ seaborn
 xgboost
 numba
 scipy
-tensorflow==2.9.2
+tensorflow==2.8.4

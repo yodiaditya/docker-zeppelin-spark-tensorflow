@@ -10,6 +10,13 @@ ENV TZ=UTC \
 
 USER root
 
+# You can change the apt source to a faster mirror. 
+# This is an example for Indonesian mirror
+
+# RUN rm -rf /etc/apt/sources.list
+# RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal main restricted universe multiverse" > /etc/apt/sources.list
+# RUN echo "deb http://kartolo.sby.datautama.net.id/ubuntu/ focal-security main restricted universe multiverse" >> /etc/apt/sources.list
+
 ENV PIP_CACHE_DIR=/var/cache/buildkit/pip
 RUN mkdir -p $PIP_CACHE_DIR
 RUN rm -f /etc/apt/apt.conf.d/docker-clean
@@ -18,9 +25,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
 	        apt-get install -yqq --no-install-recommends \
             libnss-wrapper gcc git wget vim build-essential libxml2 nvtop 
 
-# Install libnss-wrapper
-# RUN apt-get install -y libnss-wrapper gcc git wget vim build-essential libxml2
-
+# Add libnss_wrapper.so to the common lib directory to avoid errors when running Zepplin as non-root user
 RUN mkdir -p /opt/bitnami/common/lib/
 RUN ln -s /usr/lib/libnss_wrapper.so /opt/bitnami/common/lib/libnss_wrapper.so
 ENV LD_PRELOAD=/usr/lib/libnss_wrapper.so
@@ -30,21 +35,22 @@ RUN mkdir -p ${ZEPPELIN_NOTEBOOK_DIR}
 RUN chown -R 1000:1000 ${ZEPPELIN_NOTEBOOK_DIR}
 RUN chmod -R 777 ${ZEPPELIN_NOTEBOOK_DIR}
 
-# Make sure to copy pip-cache in zeppelin folder
-# This will use zeppelin folder as parent directory (Dockerfile context . )
+# Copy pip-cache folder from host to Docker
+# Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
 COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
 RUN chown -R 1000:1000 ${ZEPPELIN_HOME}/pip-cache
 
-# Copy required files
+# Copy the configuration files and requirements.txt
 COPY ./conf/zeppelin-env.sh ${ZEPPELIN_HOME}/conf/zeppelin-env.sh
 COPY ./requirements.txt ${ZEPPELIN_HOME}/requirements.txt
 COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 
-# Setup conda
+# Setup conda and auto load environment `python_3_with_R` whenever login 
 ENV PATH /opt/conda/envs/python_3_with_R/bin:$PATH
 COPY ./bashrc ${ZEPPELIN_HOME}/.bashrc
+RUN chown 1000:1000 ${ZEPPELIN_HOME}/.bashrc
 
-################# Install CUDA #################
+################# CUDA INSTALLATION #################
 # COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE CUDA 
 
 # ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO THE zeppelin/cuda FOLDER
@@ -70,7 +76,7 @@ RUN ldconfig
 
 ################# End Install CUDA #################
 
-RUN chown 1000:1000 ${ZEPPELIN_HOME}/.bashrc
+# Change the user back to zeppelin
 USER 1000
 
 # Install the required packages. You can modify the requirements.txt file to include the packages you need.
@@ -78,11 +84,18 @@ USER 1000
 # the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
 RUN pip install --cache-dir pip-cache -r requirements.txt
 
-################# Install TFX #################
-# COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE TFX 
+################## Install TFX #################
+## COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE TFX 
 
 # Install TFX
 RUN pip install --cache-dir pip-cache -r tfx_requirements.txt
 RUN pip uninstall shapely -y
-################# END TFX Installation #################
 
+################## END TFX Installation #################
+
+USER root 
+
+RUN rm -r pip-cache
+RUN rm -r cuda
+
+USER 1000
