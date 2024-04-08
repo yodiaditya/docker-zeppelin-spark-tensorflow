@@ -43,7 +43,7 @@ COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 ################# CUDA INSTALLATION #################
 # COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE CUDA 
 
-# # ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO THE zeppelin/cuda FOLDER
+# ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO THE zeppelin/cuda FOLDER
 
 # # CUDA Installation
 # COPY ./cuda ${ZEPPELIN_HOME}/cuda
@@ -69,18 +69,18 @@ COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 
 ################## INSTALL MAMBA AND PYTHON 3.9 #################
 
-COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
+# COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
 
-RUN conda update --all && \
-    conda install mamba -c conda-forge && \
-    mamba remove -n python_3_with_R --all -y && \
-    mamba env update -f ${ZEPPELIN_HOME}/env_python_3_with_R.yml --prune && \
-    # Cleanup based on https://github.com/ContinuumIO/docker-images/commit/cac3352bf21a26fa0b97925b578fb24a0fe8c383
-    find /opt/conda/ -follow -type f -name '*.a' -delete && \
-    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
-    mamba clean -ay
-    # Allow to modify conda packages. This allows malicious code to be injected into other interpreter sessions, therefore it is disabled by default
-    # chmod -R ug+rwX /opt/conda
+# RUN conda update --all && \
+#     conda install mamba -c conda-forge && \
+#     mamba remove -n python_3_with_R --all -y && \
+#     mamba env update -f ${ZEPPELIN_HOME}/env_python_3_with_R.yml --prune && \
+#     # Cleanup based on https://github.com/ContinuumIO/docker-images/commit/cac3352bf21a26fa0b97925b578fb24a0fe8c383
+#     find /opt/conda/ -follow -type f -name '*.a' -delete && \
+#     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+#     mamba clean -ay
+#     # Allow to modify conda packages. This allows malicious code to be injected into other interpreter sessions, therefore it is disabled by default
+#     # chmod -R ug+rwX /opt/conda
 
 ENV PATH /opt/conda/envs/python_3_with_R/bin:/opt/conda/bin:$PATH
 ENV PATH=/opt/zeppelin/.local/bin:$PATH
@@ -102,8 +102,8 @@ USER 1000
 # At first run, you can run the following command to install the packages
 # the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
 
-RUN mkdir -p ${ZEPPELIN_HOME}/pip-cache
-RUN pip install --cache-dir pip-cache -r requirements.txt
+# RUN mkdir -p ${ZEPPELIN_HOME}/pip-cache
+# RUN pip install --cache-dir pip-cache -r requirements.txt
 
 ################## Install TFX #################
 ## COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE TFX 

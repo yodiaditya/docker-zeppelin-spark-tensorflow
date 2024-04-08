@@ -3,7 +3,7 @@
     {
       "text": "%pyspark\n!pip install rankfm",
       "user": "anonymous",
-      "dateUpdated": "2024-04-08 20:06:38.949",
+      "dateUpdated": "2024-04-08 21:03:24.306",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -23,28 +23,28 @@
         "forms": {}
       },
       "results": {
-        "code": "ERROR",
+        "code": "SUCCESS",
         "msg": [
           {
             "type": "TEXT",
-            "data": "Traceback (most recent call last):\n  File \"/tmp/python8166131365034144374/zeppelin_python.py\", line 152, in \u003cmodule\u003e\n    code \u003d compile(\u0027\\n\u0027.join(stmts), \u0027\u003cstdin\u003e\u0027, \u0027exec\u0027, ast.PyCF_ONLY_AST, 1)\n  File \"\u003cstdin\u003e\", line 2\n    !pip install rankfm\n    ^\nSyntaxError: invalid syntax\n"
+            "data": "Collecting rankfm\r\n  Downloading rankfm-0.2.5.tar.gz (145 kB)\r\n\u001b[?25l     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/145.5 KB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K     \u001b[91m━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m20.5/145.5 KB\u001b[0m \u001b[31m386.6 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m30.7/145.5 KB\u001b[0m \u001b[31m385.3 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m30.7/145.5 KB\u001b[0m \u001b[31m385.3 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m30.7/145.5 KB\u001b[0m \u001b[31m385.3 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m41.0/145.5 KB\u001b[0m \u001b[31m186.6 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m41.0/145.5 KB\u001b[0m \u001b[31m186.6 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m81.9/145.5 KB\u001b[0m \u001b[31m311.0 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━\u001b[0m \u001b[32m92.2/145.5 KB\u001b[0m \u001b[31m327.6 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━\u001b[0m \u001b[32m92.2/145.5 KB\u001b[0m \u001b[31m327.6 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━━━━━━━━━\u001b[0m \u001b[32m92.2/145.5 KB\u001b[0m \u001b[31m327.6 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[90m╺\u001b[0m\u001b[90m━━━━━\u001b[0m \u001b[32m122.9/145.5 KB\u001b[0m \u001b[31m309.1 kB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m145.5/145.5 KB\u001b[0m \u001b[31m357.3 kB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n\u001b[?25h  Preparing metadata (setup.py) ... \u001b[?25l-\b \bdone\r\n\u001b[?25hRequirement already satisfied: numpy\u003e\u003d1.15 in /opt/conda/envs/python_3_with_R/lib/python3.7/site-packages (from rankfm) (1.19.5)\r\nRequirement already satisfied: pandas\u003e\u003d0.24 in /opt/conda/envs/python_3_with_R/lib/python3.7/site-packages (from rankfm) (1.3.5)\r\nRequirement already satisfied: python-dateutil\u003e\u003d2.7.3 in /opt/conda/envs/python_3_with_R/lib/python3.7/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2.8.2)\r\nRequirement already satisfied: pytz\u003e\u003d2017.3 in /opt/conda/envs/python_3_with_R/lib/python3.7/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2021.3)\r\nRequirement already satisfied: six\u003e\u003d1.5 in /opt/conda/envs/python_3_with_R/lib/python3.7/site-packages (from python-dateutil\u003e\u003d2.7.3-\u003epandas\u003e\u003d0.24-\u003erankfm) (1.16.0)\r\nBuilding wheels for collected packages: rankfm\r\n  Building wheel for rankfm (setup.py) ... \u001b[?25l-\b \b\\\b \b|\b \b/\b \bdone\r\n\u001b[?25h  Created wheel for rankfm: filename\u003drankfm-0.2.5-cp37-cp37m-linux_x86_64.whl size\u003d527435 sha256\u003d0f4da1a4595e9240800b421a770855aa07d436731ff125a785a95dfe86c68acb\r\n  Stored in directory: /opt/zeppelin/.cache/pip/wheels/99/5f/9d/caa74d8a3cad3dcc3ed9e02d27e7bc18d0ccd1dd5ed1fcdb99\r\nSuccessfully built rankfm\r\nInstalling collected packages: rankfm\r\nSuccessfully installed rankfm-0.2.5\r\n"
           }
         ]
       },
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1712562801660_581737404",
-      "id": "paragraph_1712562801660_581737404",
-      "dateCreated": "2024-04-08 07:53:21.660",
-      "dateStarted": "2024-04-08 20:06:38.952",
-      "dateFinished": "2024-04-08 20:06:38.959",
-      "status": "ERROR"
+      "jobName": "paragraph_1712609943361_1657764005",
+      "id": "paragraph_1712609943361_1657764005",
+      "dateCreated": "2024-04-08 20:59:03.361",
+      "dateStarted": "2024-04-08 21:03:24.317",
+      "dateFinished": "2024-04-08 21:03:43.969",
+      "status": "FINISHED"
     },
     {
       "text": "%pyspark\nimport pandas as pd\n\nfrom rankfm.rankfm import RankFM\nfrom rankfm.evaluation import hit_rate, reciprocal_rank, discounted_cumulative_gain, precision, recall, diversity\n\nimport warnings\n# warnings.filterwarnings(\"ignore\", category\u003dnb.NumbaPerformanceWarning)\n",
       "user": "anonymous",
-      "dateUpdated": "2024-04-08 20:07:19.656",
+      "dateUpdated": "2024-04-08 21:03:26.591",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -73,15 +73,15 @@
       "jobName": "paragraph_1712562729139_877933842",
       "id": "paragraph_1712562729139_877933842",
       "dateCreated": "2024-04-08 07:52:09.139",
-      "dateStarted": "2024-04-08 20:07:19.658",
-      "dateFinished": "2024-04-08 20:07:27.627",
+      "dateStarted": "2024-04-08 21:03:32.322",
+      "dateFinished": "2024-04-08 21:03:44.321",
       "status": "FINISHED"
     },
     {
-      "text": "%pyspark\nratings \u003d spark.read.option(\"header\", True).option(\"delimiter\", \",\").csv(\"/data/ml-25m/ratings.csv\")\nratings.show(5)",
+      "text": "%pyspark\nratings \u003d spark.read.option(\"header\", True).option(\"delimiter\", \",\").csv(\"/data/californiahousing.csv\")\nratings.show(5)",
       "user": "anonymous",
-      "dateUpdated": "2024-04-08 20:07:29.417",
-      "progress": 0,
+      "dateUpdated": "2024-04-08 21:03:28.785",
+      "progress": 100,
       "config": {
         "editorSetting": {
           "language": "python",
@@ -104,7 +104,7 @@
         "msg": [
           {
             "type": "TEXT",
-            "data": "+------+-------+------+----------+\n|userId|movieId|rating| timestamp|\n+------+-------+------+----------+\n|     1|    296|   5.0|1147880044|\n|     1|    306|   3.5|1147868817|\n|     1|    307|   5.0|1147868828|\n|     1|    665|   5.0|1147878820|\n|     1|    899|   3.5|1147868510|\n+------+-------+------+----------+\nonly showing top 5 rows\n\n"
+            "data": "+------+--------+------------------+------------------+----------+------------------+--------+---------+-----------+\n|MedInc|HouseAge|          AveRooms|         AveBedrms|Population|          AveOccup|Latitude|Longitude|MedHouseVal|\n+------+--------+------------------+------------------+----------+------------------+--------+---------+-----------+\n|8.3252|    41.0| 6.984126984126984|1.0238095238095237|     322.0|2.5555555555555554|   37.88|  -122.23|      4.526|\n|8.3014|    21.0| 6.238137082601054|0.9718804920913884|    2401.0| 2.109841827768014|   37.86|  -122.22|      3.585|\n|7.2574|    52.0| 8.288135593220339| 1.073446327683616|     496.0|2.8022598870056497|   37.85|  -122.24|      3.521|\n|5.6431|    52.0|5.8173515981735155|1.0730593607305936|     558.0| 2.547945205479452|   37.85|  -122.25|      3.413|\n|3.8462|    52.0| 6.281853281853282|1.0810810810810811|     565.0|2.1814671814671813|   37.85|  -122.25|      3.422|\n+------+--------+------------------+------------------+----------+------------------+--------+---------+-----------+\nonly showing top 5 rows\n\n"
           }
         ]
       },
@@ -130,8 +130,8 @@
       "jobName": "paragraph_1712562797380_369143858",
       "id": "paragraph_1712562797380_369143858",
       "dateCreated": "2024-04-08 07:53:17.380",
-      "dateStarted": "2024-04-08 20:07:29.420",
-      "dateFinished": "2024-04-08 20:07:31.464",
+      "dateStarted": "2024-04-08 21:03:44.029",
+      "dateFinished": "2024-04-08 21:03:46.691",
       "status": "FINISHED"
     },
     {

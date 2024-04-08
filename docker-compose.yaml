@@ -35,7 +35,7 @@ services:
     container_name: zeppelin
     hostname: zeppelin.local # You can change it into "zeppelin.local" and add into /etc/hosts
     ports:
-      - "9999:9999"
+      - "9999:8080"
     links:
       - spark-master
     depends_on:
@@ -43,7 +43,7 @@ services:
     environment:
       SPARK_HOME: /opt/bitnami/spark
       ZEPPELIN_LOG_DIR: /opt/zeppelin/logs
-      ZEPPELIN_NOTEBOOK_DIR: /opt/zeppelin/notebook 
+      ZEPPELIN_NOTEBOOK_DIR: /opt/zeppelin/notebook
     volumes:
       - spark-binaries:/opt/bitnami/spark
       - ./notebook:/opt/zeppelin/notebook       # notebook folder in main project : path in docker
