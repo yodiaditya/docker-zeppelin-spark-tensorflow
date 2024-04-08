@@ -83,7 +83,7 @@ RUN conda update --all && \
     # chmod -R ug+rwX /opt/conda
 
 ENV PATH /opt/conda/envs/python_3_with_R/bin:/opt/conda/bin:$PATH
-
+ENV PATH=/opt/zeppelin/.local/bin:$PATH
 ###################### END MAMBA AND PYTHON 3.9 ######################
 
 # Setup conda and auto load environment `python_3_with_R` whenever login 
