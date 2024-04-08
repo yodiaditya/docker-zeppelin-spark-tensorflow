@@ -1,0 +1,892 @@
+{
+  "paragraphs": [
+    {
+      "text": "%pyspark\n!pip install numba rankfm matplotlib seaborn",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 10:33:23.027",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Defaulting to user installation because normal site-packages is not writeable\r\nRequirement already satisfied: numba in ./.local/lib/python3.8/site-packages (0.58.1)\r\nRequirement already satisfied: rankfm in ./.local/lib/python3.8/site-packages (0.2.5)\r\nRequirement already satisfied: matplotlib in ./.local/lib/python3.8/site-packages (3.7.5)\r\nRequirement already satisfied: seaborn in ./.local/lib/python3.8/site-packages (0.13.2)\r\nRequirement already satisfied: llvmlite\u003c0.42,\u003e\u003d0.41.0dev0 in ./.local/lib/python3.8/site-packages (from numba) (0.41.1)\r\nRequirement already satisfied: numpy\u003c1.27,\u003e\u003d1.22 in ./.local/lib/python3.8/site-packages (from numba) (1.22.4)\r\nRequirement already satisfied: importlib-metadata in ./.local/lib/python3.8/site-packages (from numba) (7.1.0)\r\nRequirement already satisfied: pandas\u003e\u003d0.24 in ./.local/lib/python3.8/site-packages (from rankfm) (1.5.3)\r\nRequirement already satisfied: contourpy\u003e\u003d1.0.1 in ./.local/lib/python3.8/site-packages (from matplotlib) (1.1.1)\r\nRequirement already satisfied: cycler\u003e\u003d0.10 in ./.local/lib/python3.8/site-packages (from matplotlib) (0.12.1)\r\nRequirement already satisfied: fonttools\u003e\u003d4.22.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (4.51.0)\r\nRequirement already satisfied: kiwisolver\u003e\u003d1.0.1 in ./.local/lib/python3.8/site-packages (from matplotlib) (1.4.5)\r\nRequirement already satisfied: packaging\u003e\u003d20.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (20.9)\r\nRequirement already satisfied: pillow\u003e\u003d6.2.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (9.3.0)\r\nRequirement already satisfied: pyparsing\u003e\u003d2.3.1 in ./.local/lib/python3.8/site-packages (from matplotlib) (3.1.2)\r\nRequirement already satisfied: python-dateutil\u003e\u003d2.7 in ./.local/lib/python3.8/site-packages (from matplotlib) (2.9.0.post0)\r\nRequirement already satisfied: importlib-resources\u003e\u003d3.2.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (6.1.1)\r\nRequirement already satisfied: zipp\u003e\u003d3.1.0 in ./.local/lib/python3.8/site-packages (from importlib-resources\u003e\u003d3.2.0-\u003ematplotlib) (3.18.1)\r\nRequirement already satisfied: pytz\u003e\u003d2020.1 in ./.local/lib/python3.8/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2024.1)\r\nRequirement already satisfied: six\u003e\u003d1.5 in ./.local/lib/python3.8/site-packages (from python-dateutil\u003e\u003d2.7-\u003ematplotlib) (1.16.0)\r\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712562801660_581737404",
+      "id": "paragraph_1712562801660_581737404",
+      "dateCreated": "2024-04-08 07:53:21.660",
+      "dateStarted": "2024-04-08 10:33:23.028",
+      "dateFinished": "2024-04-08 10:33:24.490",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nimport numpy as np\nimport numba as nb\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nfrom rankfm.rankfm import RankFM\nfrom rankfm.evaluation import hit_rate, reciprocal_rank, discounted_cumulative_gain, precision, recall, diversity\n\nimport warnings\n# warnings.filterwarnings(\"ignore\", category\u003dnb.NumbaPerformanceWarning)\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 10:33:27.765",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712562729139_877933842",
+      "id": "paragraph_1712562729139_877933842",
+      "dateCreated": "2024-04-08 07:52:09.139",
+      "dateStarted": "2024-04-08 10:33:27.767",
+      "dateFinished": "2024-04-08 10:33:27.972",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nratings \u003d spark.read.option(\"header\", True).option(\"delimiter\", \",\").csv(\"/data/ml-25m/ratings.csv\")\nratings.show(5)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 10:59:18.478",
+      "progress": 100,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "+------+-------+------+----------+\n|userId|movieId|rating| timestamp|\n+------+-------+------+----------+\n|     1|    296|   5.0|1147880044|\n|     1|    306|   3.5|1147868817|\n|     1|    307|   5.0|1147868828|\n|     1|    665|   5.0|1147878820|\n|     1|    899|   3.5|1147868510|\n+------+-------+------+----------+\nonly showing top 5 rows\n\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d5"
+            },
+            {
+              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d6"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712562797380_369143858",
+      "id": "paragraph_1712562797380_369143858",
+      "dateCreated": "2024-04-08 07:53:17.380",
+      "dateStarted": "2024-04-08 10:59:18.479",
+      "dateFinished": "2024-04-08 10:59:18.786",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nuser_features \u003d spark.read.option(\"header\", True).option(\"delimiter\", \"::\").csv(\"/data/users.dat\")\nuser_features.occupation \u003d user_features.occupation.astype(\u0027str\u0027)\nuser_features.age \u003d user_features.age.astype(\u0027str\u0027)\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 11:02:34.360",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m\n\u001b[0;31mAnalysisException\u001b[0m                         Traceback (most recent call last)\nCell \u001b[0;32mIn[350], line 1\u001b[0m\n\u001b[0;32m----\u003e 1\u001b[0m user_features \u001b[38;5;241m\u003d\u001b[39m \u001b[43mspark\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mread\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moption\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mheader\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43;01mTrue\u001b[39;49;00m\u001b[43m)\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43moption\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mdelimiter\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43m::\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mcsv\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43m/data/users.dat\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m)\u001b[49m\n\u001b[1;32m      2\u001b[0m user_features\u001b[38;5;241m.\u001b[39moccupation \u001b[38;5;241m\u003d\u001b[39m user_features\u001b[38;5;241m.\u001b[39moccupation\u001b[38;5;241m.\u001b[39mastype(\u001b[38;5;124m\u0027\u001b[39m\u001b[38;5;124mstr\u001b[39m\u001b[38;5;124m\u0027\u001b[39m)\n\u001b[1;32m      3\u001b[0m user_features\u001b[38;5;241m.\u001b[39mage \u001b[38;5;241m\u003d\u001b[39m user_features\u001b[38;5;241m.\u001b[39mage\u001b[38;5;241m.\u001b[39mastype(\u001b[38;5;124m\u0027\u001b[39m\u001b[38;5;124mstr\u001b[39m\u001b[38;5;124m\u0027\u001b[39m)\n\nFile \u001b[0;32m/opt/bitnami/spark/python/lib/pyspark.zip/pyspark/sql/readwriter.py:737\u001b[0m, in \u001b[0;36mDataFrameReader.csv\u001b[0;34m(self, path, schema, sep, encoding, quote, escape, comment, header, inferSchema, ignoreLeadingWhiteSpace, ignoreTrailingWhiteSpace, nullValue, nanValue, positiveInf, negativeInf, dateFormat, timestampFormat, maxColumns, maxCharsPerColumn, maxMalformedLogPerPartition, mode, columnNameOfCorruptRecord, multiLine, charToEscapeQuoteEscaping, samplingRatio, enforceSchema, emptyValue, locale, lineSep, pathGlobFilter, recursiveFileLookup, modifiedBefore, modifiedAfter, unescapedQuoteHandling)\u001b[0m\n\u001b[1;32m    735\u001b[0m     path \u001b[38;5;241m\u003d\u001b[39m [path]\n\u001b[1;32m    736\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;28mtype\u001b[39m(path) \u001b[38;5;241m\u003d\u003d\u001b[39m \u001b[38;5;28mlist\u001b[39m:\n\u001b[0;32m--\u003e 737\u001b[0m     \u001b[38;5;28;01mreturn\u001b[39;00m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39m_df(\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43m_jreader\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mcsv\u001b[49m\u001b[43m(\u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43m_spark\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43m_sc\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43m_jvm\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mPythonUtils\u001b[49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mtoSeq\u001b[49m\u001b[43m(\u001b[49m\u001b[43mpath\u001b[49m\u001b[43m)\u001b[49m\u001b[43m)\u001b[49m)\n\u001b[1;32m    738\u001b[0m \u001b[38;5;28;01melif\u001b[39;00m \u001b[38;5;28misinstance\u001b[39m(path, RDD):\n\u001b[1;32m    739\u001b[0m     \u001b[38;5;28;01mdef\u001b[39;00m \u001b[38;5;21mfunc\u001b[39m(iterator):\n\nFile \u001b[0;32m/opt/bitnami/spark/python/lib/py4j-0.10.9-src.zip/py4j/java_gateway.py:1304\u001b[0m, in \u001b[0;36mJavaMember.__call__\u001b[0;34m(self, *args)\u001b[0m\n\u001b[1;32m   1298\u001b[0m command \u001b[38;5;241m\u003d\u001b[39m proto\u001b[38;5;241m.\u001b[39mCALL_COMMAND_NAME \u001b[38;5;241m+\u001b[39m\\\n\u001b[1;32m   1299\u001b[0m     \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mcommand_header \u001b[38;5;241m+\u001b[39m\\\n\u001b[1;32m   1300\u001b[0m     args_command \u001b[38;5;241m+\u001b[39m\\\n\u001b[1;32m   1301\u001b[0m     proto\u001b[38;5;241m.\u001b[39mEND_COMMAND_PART\n\u001b[1;32m   1303\u001b[0m answer \u001b[38;5;241m\u003d\u001b[39m \u001b[38;5;28mself\u001b[39m\u001b[38;5;241m.\u001b[39mgateway_client\u001b[38;5;241m.\u001b[39msend_command(command)\n\u001b[0;32m-\u003e 1304\u001b[0m return_value \u001b[38;5;241m\u003d\u001b[39m \u001b[43mget_return_value\u001b[49m\u001b[43m(\u001b[49m\n\u001b[1;32m   1305\u001b[0m \u001b[43m    \u001b[49m\u001b[43manswer\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mgateway_client\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mtarget_id\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;28;43mself\u001b[39;49m\u001b[38;5;241;43m.\u001b[39;49m\u001b[43mname\u001b[49m\u001b[43m)\u001b[49m\n\u001b[1;32m   1307\u001b[0m \u001b[38;5;28;01mfor\u001b[39;00m temp_arg \u001b[38;5;129;01min\u001b[39;00m temp_args:\n\u001b[1;32m   1308\u001b[0m     temp_arg\u001b[38;5;241m.\u001b[39m_detach()\n\nFile \u001b[0;32m/opt/bitnami/spark/python/lib/pyspark.zip/pyspark/sql/utils.py:117\u001b[0m, in \u001b[0;36mcapture_sql_exception.\u003clocals\u003e.deco\u001b[0;34m(*a, **kw)\u001b[0m\n\u001b[1;32m    113\u001b[0m converted \u001b[38;5;241m\u003d\u001b[39m convert_exception(e\u001b[38;5;241m.\u001b[39mjava_exception)\n\u001b[1;32m    114\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m \u001b[38;5;129;01mnot\u001b[39;00m \u001b[38;5;28misinstance\u001b[39m(converted, UnknownException):\n\u001b[1;32m    115\u001b[0m     \u001b[38;5;66;03m# Hide where the exception came from that shows a non-Pythonic\u001b[39;00m\n\u001b[1;32m    116\u001b[0m     \u001b[38;5;66;03m# JVM exception message.\u001b[39;00m\n\u001b[0;32m--\u003e 117\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m converted \u001b[38;5;28;01mfrom\u001b[39;00m \u001b[38;5;28;01mNone\u001b[39;00m\n\u001b[1;32m    118\u001b[0m \u001b[38;5;28;01melse\u001b[39;00m:\n\u001b[1;32m    119\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m\n\n\u001b[0;31mAnalysisException\u001b[0m: Found duplicate column(s) in the data schema: `10`"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d9"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712562941637_1788548983",
+      "id": "paragraph_1712562941637_1788548983",
+      "dateCreated": "2024-04-08 07:55:41.637",
+      "dateStarted": "2024-04-08 11:02:34.362",
+      "dateFinished": "2024-04-08 11:02:34.620",
+      "status": "ERROR"
+    },
+    {
+      "text": "%pyspark\nimport collections\n\nmovie_desc \u003d pd.read_csv(\"/data/movies.dat\", names\u003d[\"item_id\", \"title\", \"genres\"], delimiter\u003d\"::\", engine\u003d\"python\", encoding\u003d\"ISO-8859-1\")\n\n# Convert genres to lowercase\nmovie_desc.genres \u003d movie_desc.genres.str.lower()\n\nsplit_series \u003d movie_desc.genres.str.split(\u0027|\u0027).apply(lambda x: x)\nsplit_series_dict \u003d split_series.apply(collections.Counter)\n\nmulti_hot \u003d pd.DataFrame.from_records(split_series_dict).fillna(value\u003d0).astype(\u0027int\u0027)\n\nitem_features \u003d pd.concat([movie_desc.item_id, multi_hot], axis\u003d1)\nitem_features\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:24.936",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv\u003e\n\u003cstyle scoped\u003e\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n\u003c/style\u003e\n\u003ctable border\u003d\"1\" class\u003d\"dataframe\"\u003e\n  \u003cthead\u003e\n    \u003ctr style\u003d\"text-align: right;\"\u003e\n      \u003cth\u003e\u003c/th\u003e\n      \u003cth\u003eitem_id\u003c/th\u003e\n      \u003cth\u003eanimation\u003c/th\u003e\n      \u003cth\u003echildren\u0027s\u003c/th\u003e\n      \u003cth\u003ecomedy\u003c/th\u003e\n      \u003cth\u003eadventure\u003c/th\u003e\n      \u003cth\u003efantasy\u003c/th\u003e\n      \u003cth\u003eromance\u003c/th\u003e\n      \u003cth\u003edrama\u003c/th\u003e\n      \u003cth\u003eaction\u003c/th\u003e\n      \u003cth\u003ecrime\u003c/th\u003e\n      \u003cth\u003ethriller\u003c/th\u003e\n      \u003cth\u003ehorror\u003c/th\u003e\n      \u003cth\u003esci-fi\u003c/th\u003e\n      \u003cth\u003edocumentary\u003c/th\u003e\n      \u003cth\u003ewar\u003c/th\u003e\n      \u003cth\u003emusical\u003c/th\u003e\n      \u003cth\u003emystery\u003c/th\u003e\n      \u003cth\u003efilm-noir\u003c/th\u003e\n      \u003cth\u003ewestern\u003c/th\u003e\n    \u003c/tr\u003e\n  \u003c/thead\u003e\n  \u003ctbody\u003e\n    \u003ctr\u003e\n      \u003cth\u003e0\u003c/th\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e1\u003c/th\u003e\n      \u003ctd\u003e2\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e2\u003c/th\u003e\n      \u003ctd\u003e3\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3\u003c/th\u003e\n      \u003ctd\u003e4\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e4\u003c/th\u003e\n      \u003ctd\u003e5\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e...\u003c/th\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3878\u003c/th\u003e\n      \u003ctd\u003e3948\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3879\u003c/th\u003e\n      \u003ctd\u003e3949\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3880\u003c/th\u003e\n      \u003ctd\u003e3950\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3881\u003c/th\u003e\n      \u003ctd\u003e3951\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3882\u003c/th\u003e\n      \u003ctd\u003e3952\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n      \u003ctd\u003e0\u003c/td\u003e\n    \u003c/tr\u003e\n  \u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e3883 rows × 19 columns\u003c/p\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712562975703_1175108490",
+      "id": "paragraph_1712562975703_1175108490",
+      "dateCreated": "2024-04-08 07:56:15.703",
+      "dateStarted": "2024-04-08 08:08:24.937",
+      "dateFinished": "2024-04-08 08:08:25.144",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nitem_names \u003d movie_desc\nitem_names.head()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:25.237",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv\u003e\n\u003cstyle scoped\u003e\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n\u003c/style\u003e\n\u003ctable border\u003d\"1\" class\u003d\"dataframe\"\u003e\n  \u003cthead\u003e\n    \u003ctr style\u003d\"text-align: right;\"\u003e\n      \u003cth\u003e\u003c/th\u003e\n      \u003cth\u003eitem_id\u003c/th\u003e\n      \u003cth\u003etitle\u003c/th\u003e\n      \u003cth\u003egenres\u003c/th\u003e\n    \u003c/tr\u003e\n  \u003c/thead\u003e\n  \u003ctbody\u003e\n    \u003ctr\u003e\n      \u003cth\u003e0\u003c/th\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003eToy Story (1995)\u003c/td\u003e\n      \u003ctd\u003eanimation|children\u0027s|comedy\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e1\u003c/th\u003e\n      \u003ctd\u003e2\u003c/td\u003e\n      \u003ctd\u003eJumanji (1995)\u003c/td\u003e\n      \u003ctd\u003eadventure|children\u0027s|fantasy\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e2\u003c/th\u003e\n      \u003ctd\u003e3\u003c/td\u003e\n      \u003ctd\u003eGrumpier Old Men (1995)\u003c/td\u003e\n      \u003ctd\u003ecomedy|romance\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3\u003c/th\u003e\n      \u003ctd\u003e4\u003c/td\u003e\n      \u003ctd\u003eWaiting to Exhale (1995)\u003c/td\u003e\n      \u003ctd\u003ecomedy|drama\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e4\u003c/th\u003e\n      \u003ctd\u003e5\u003c/td\u003e\n      \u003ctd\u003eFather of the Bride Part II (1995)\u003c/td\u003e\n      \u003ctd\u003ecomedy\u003c/td\u003e\n    \u003c/tr\u003e\n  \u003c/tbody\u003e\n\u003c/table\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563002557_1773451501",
+      "id": "paragraph_1712563002557_1773451501",
+      "dateCreated": "2024-04-08 07:56:42.557",
+      "dateStarted": "2024-04-08 08:08:25.238",
+      "dateFinished": "2024-04-08 08:08:25.445",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nunique_users \u003d interactions.user_id.nunique()\nunique_items \u003d interactions.item_id.nunique()\n\nsparsity \u003d 1 - (len(interactions) / (unique_users * unique_items))\nprint(\"interaction matrix sparsity: {}%\".format(round(100 * sparsity, 1)))",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:25.539",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "interaction matrix sparsity: 98.7%\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563012104_109093263",
+      "id": "paragraph_1712563012104_109093263",
+      "dateCreated": "2024-04-08 07:56:52.104",
+      "dateStarted": "2024-04-08 08:08:25.540",
+      "dateFinished": "2024-04-08 08:08:25.796",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nnp.random.seed(42)\ninteractions[\u0027random\u0027] \u003d np.random.random(size\u003dlen(interactions))\ntest_pct \u003d 0.25",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:25.840",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563018286_290240931",
+      "id": "paragraph_1712563018286_290240931",
+      "dateCreated": "2024-04-08 07:56:58.286",
+      "dateStarted": "2024-04-08 08:08:25.841",
+      "dateFinished": "2024-04-08 08:08:26.097",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\ntrain_mask \u003d interactions[\u0027random\u0027] \u003c  (1 - test_pct)\nvalid_mask \u003d interactions[\u0027random\u0027] \u003e\u003d (1 - test_pct)\n\ninteractions_train \u003d interactions[train_mask][[\u0027user_id\u0027, \u0027item_id\u0027]]\ninteractions_valid \u003d interactions[valid_mask][[\u0027user_id\u0027, \u0027item_id\u0027]]\n\ntrain_users \u003d np.sort(interactions_train.user_id.unique())\nvalid_users \u003d np.sort(interactions_valid.user_id.unique())\ncold_start_users \u003d set(valid_users) - set(train_users)\n\ntrain_items \u003d np.sort(interactions_train.item_id.unique())\nvalid_items \u003d np.sort(interactions_valid.item_id.unique())\ncold_start_items \u003d set(valid_items) - set(train_items)\n\nprint(\"train shape: {}\".format(interactions_train.shape))\nprint(\"valid shape: {}\".format(interactions_valid.shape))\n\nprint(\"train users: {}\".format(len(train_users)))\nprint(\"valid users: {}\".format(len(valid_users)))\nprint(\"cold-start users: {}\".format(cold_start_users))\n\nprint(\"train items: {}\".format(len(train_items)))\nprint(\"valid items: {}\".format(len(valid_items)))\nprint(\"cold-start items: {}\".format(cold_start_items))\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:26.141",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "train shape: (7500733, 2)\nvalid shape: (2499321, 2)\ntrain users: 69878\nvalid users: 69854\ncold-start users: set()\ntrain items: 10642\nvalid items: 10350\ncold-start items: {39429, 64652, 6929, 61970, 64275, 58520, 3226, 7452, 6941, 62237, 64288, 38435, 62245, 6189, 63662, 64944, 5814, 7750, 7754, 8394, 3277, 59854, 56015, 60237, 62671, 63698, 63327, 7145, 59625, 53355, 65130, 8945, 64754, 3191, 60666}\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563024728_1529526548",
+      "id": "paragraph_1712563024728_1529526548",
+      "dateCreated": "2024-04-08 07:57:04.728",
+      "dateStarted": "2024-04-08 08:08:26.143",
+      "dateFinished": "2024-04-08 08:08:26.700",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nuser_features \u003d user_features[user_features.user_id.isin(train_users)]\nitem_features \u003d item_features[item_features.item_id.isin(train_items)]\nuser_features.shape, item_features.shape",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:26.743",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "((5857, 31), (3858, 19))"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563033267_751786763",
+      "id": "paragraph_1712563033267_751786763",
+      "dateCreated": "2024-04-08 07:57:13.267",
+      "dateStarted": "2024-04-08 08:08:26.745",
+      "dateFinished": "2024-04-08 08:08:26.954",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\ndf_train \u003d interactions[[\u0027user_id\u0027, \u0027item_id\u0027]]\ndf_train_total \u003d df_train.groupby(\u0027user_id\u0027)[\u0027item_id\u0027].count().reset_index(name\u003d\"total_item\")\ndf_train_total",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:27.045",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv\u003e\n\u003cstyle scoped\u003e\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n\u003c/style\u003e\n\u003ctable border\u003d\"1\" class\u003d\"dataframe\"\u003e\n  \u003cthead\u003e\n    \u003ctr style\u003d\"text-align: right;\"\u003e\n      \u003cth\u003e\u003c/th\u003e\n      \u003cth\u003euser_id\u003c/th\u003e\n      \u003cth\u003etotal_item\u003c/th\u003e\n    \u003c/tr\u003e\n  \u003c/thead\u003e\n  \u003ctbody\u003e\n    \u003ctr\u003e\n      \u003cth\u003e0\u003c/th\u003e\n      \u003ctd\u003e1\u003c/td\u003e\n      \u003ctd\u003e22\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e1\u003c/th\u003e\n      \u003ctd\u003e2\u003c/td\u003e\n      \u003ctd\u003e20\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e2\u003c/th\u003e\n      \u003ctd\u003e3\u003c/td\u003e\n      \u003ctd\u003e33\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3\u003c/th\u003e\n      \u003ctd\u003e4\u003c/td\u003e\n      \u003ctd\u003e38\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e4\u003c/th\u003e\n      \u003ctd\u003e5\u003c/td\u003e\n      \u003ctd\u003e87\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e...\u003c/th\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n      \u003ctd\u003e...\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e69873\u003c/th\u003e\n      \u003ctd\u003e71563\u003c/td\u003e\n      \u003ctd\u003e43\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e69874\u003c/th\u003e\n      \u003ctd\u003e71564\u003c/td\u003e\n      \u003ctd\u003e105\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e69875\u003c/th\u003e\n      \u003ctd\u003e71565\u003c/td\u003e\n      \u003ctd\u003e145\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e69876\u003c/th\u003e\n      \u003ctd\u003e71566\u003c/td\u003e\n      \u003ctd\u003e49\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e69877\u003c/th\u003e\n      \u003ctd\u003e71567\u003c/td\u003e\n      \u003ctd\u003e53\u003c/td\u003e\n    \u003c/tr\u003e\n  \u003c/tbody\u003e\n\u003c/table\u003e\n\u003cp\u003e69878 rows × 2 columns\u003c/p\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563042551_357732651",
+      "id": "paragraph_1712563042551_357732651",
+      "dateCreated": "2024-04-08 07:57:22.551",
+      "dateStarted": "2024-04-08 08:08:27.046",
+      "dateFinished": "2024-04-08 08:08:27.354",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nimport matplotlib.pyplot as plt\n\ntotal_users \u003d len(df_train_total)\n\n# Create a histogram\nplt.hist(df_train_total[\u0027total_item\u0027], bins\u003d10, edgecolor\u003d\u0027black\u0027, weights\u003dnp.ones(total_users) / total_users * 100)\nplt.title(\u0027Distribution of Total Items per User\u0027)\nplt.xlabel(\u0027Total Items\u0027)\nplt.ylabel(\u0027Number of Users Percentage (%)\u0027)\nplt.show()\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:27.447",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "IMG",
+            "data": "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+NLnQkREROVTubnOTlnidXaIiIgqngp/nR0iIiIiOZTp21ivgsTERKSlpZV1DL3Y29ujZs2aZR2DiIhIFiw7BpSYmIi63vXw8MH9so6iFzPzyjh/LoGFh4iIFIFlx4DS0tLw8MF92HUeAxO7inGV5kd3buDOljlIS0tj2SEiIkVg2XkJTOxcoXbyLOsYREREryQeoExERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKxrJDREREisayQ0RERIrGskNERESKZqzvA3JzcxEfH4/r16/j/v37qFatGho1agQPDw9D5CMiIiIqFZ3Lzt69e7FgwQJs3rwZjx49grW1NczNzZGeno7c3FzUqlULQ4YMwSeffIIqVaoYMjMRERGRznR6G6tr167o2bMn3N3dsX37dmRnZ+POnTv477//cP/+fVy8eBFffvklYmNjUadOHcTExBg6NxEREZFOdNqz06lTJ/z5558wMTF55vJatWqhVq1aCAkJwdmzZ5GUlCRrSCIiIqKS0mnPzscff1xs0Xmaj48PAgMDSxWqUEFBASZOnAgPDw+Ym5ujdu3a+OqrryCEkNYRQmDSpElwdnaGubk5goKCcPHiRVmen4iIiCo+vQ9QftLp06exa9cuFBQUoEWLFmjSpIlcuQAAM2fOxJIlS7BixQrUr18fhw8fxsCBA2FtbY0RI0YAAGbNmoWFCxdixYoV8PDwwMSJExEcHIyzZ8/CzMxM1jxERERU8ZT41PPFixcjMDAQu3btQlxcHNq2bYtvvvlGzmzYt28funXrhk6dOsHd3R3vvfce2rdvj4MHDwJ4vFdn/vz5+PLLL9GtWzf4+flh5cqVuHXrFjZu3ChrFiIiIqqYdC47N27c0Lr//fff48yZM1izZg02bNiAqKgozJ8/X9ZwzZs3R2xsLC5cuAAAOHHiBPbs2YMOHToAAK5evYrk5GQEBQVJj7G2tkazZs2wf//+Yrebm5uLrKwsrRsREREpk85lJygoCAsWLJCOl7Gzs0NUVBRyc3ORnZ2NHTt2oFq1arKGmzBhAnr16gVvb2+YmJigUaNGCAsLQ58+fQAAycnJAABHR0etxzk6OkrLnmXGjBmwtraWbq6urrLmJiIiovJD57Jz6NAhnD9/Hs2aNcPx48exbNkyzJs3D+bm5rCxscHq1auxYsUKWcOtWbMGv/32G37//XccPXoUK1aswHfffVfq5wkPD0dmZqZ0e3qvFRERESmHzgcoW1lZ4YcffsC+ffswYMAAtG3bFv/++y8KCgpQUFAAGxsb2cONHTtW2rsDAL6+vrh+/TpmzJiBkJAQODk5AQBSUlLg7OwsPS4lJQX+/v7FbletVkOtVsuel4iIiMofvQ9Qbt68OQ4fPgxbW1s0atQIu3fvNkjRAYD79+/DyEg7YqVKlaDRaAAAHh4ecHJyQmxsrLQ8KysL8fHxCAgIMEgmIiIiqlh03rOTn5+PZcuWISEhAQ0bNsTnn3+Onj174pNPPkFkZCS+//77IsfOlFaXLl3wzTffoGbNmqhfvz6OHTuGuXPn4sMPPwQAqFQqhIWF4euvv4aXl5d06rmLiwu6d+8uaxYiIiKqmHTeszNo0CB8//33sLCwQEREBEaNGoU6depg586dePvttxEQEIAlS5bIGm7RokV47733MGzYMNSrVw+fffYZPv74Y3z11VfSOuPGjcOnn36KIUOG4LXXXkNOTg6ioqJ4jR0iIiICAKjEk5cjfg4bGxvs378f9erVw/379+Hr64vLly9Ly1NTUxEWFobff//dYGENJSsrC9bW1sjMzISVlZVs2z169CiaNGkCp5D5UDt5yrZdQ8pNvoTkFWE4cuQIGjduXNZxiIiIiqXrv98679lxdHTE9u3bkZeXh507d8LOzk5ruYODQ4UsOkRERKRsOh+z8/3336NPnz4YPXo0nJ2dsWbNGkPmIiIiIpKFzmWnXbt2SElJQVpamuwXDyQiIiIyFL1OPVepVCw6REREVKHoVHbefvttHDhw4IXrZWdnY+bMmVi8eHGpgxERERHJQae3sd5//3306NED1tbW6NKlC5o2bQoXFxeYmZnh7t27OHv2LPbs2YOtW7eiU6dOmD17tqFzExEREelEp7IzaNAg9O3bF2vXrsXq1auxbNkyZGZmAnj81paPjw+Cg4Nx6NAh1KtXz6CBiYiIiPSh8wHKarUaffv2Rd++fQEAmZmZePDgAezs7GBiYmKwgERERESloXPZeZq1tTWsra3lzEJEREQkO70/CJSIiIioImHZISIiIkVj2SEiIiJFY9khIiIiRStR2cnIyMD//vc/hIeHIz09HcDjT/i+efOmrOGIiIiISkvvs7FOnjyJoKAgWFtb49q1axg8eDCqVq2K9evXIzExEStXrjRETiIiIqIS0XvPzujRozFgwABcvHgRZmZm0njHjh2xe/duWcMRERERlZbeZefQoUP4+OOPi4xXr14dycnJsoQiIiIikoveZUetViMrK6vI+IULF/iJ6ERERFTu6F12unbtimnTpuHRo0cAHn82VmJiIsaPH48ePXrIHpCIiIioNPQuO3PmzEFOTg4cHBzw4MEDtG7dGp6enqhSpQq++eYbQ2QkIiIiKjG9z8aytrZGTEwM9uzZg5MnTyInJweNGzdGUFCQIfIRERERlUqJPwi0ZcuWaNmypZxZiIiIiGSnd9lZuHDhM8dVKhXMzMzg6emJN998E5UqVSp1OCIiIqLS0rvszJs3D7dv38b9+/dha2sLALh79y4qV64MS0tLpKamolatWoiLi4Orq6vsgYmIiIj0ofcBytOnT8drr72Gixcv4s6dO7hz5w4uXLiAZs2aYcGCBUhMTISTkxNGjRpliLxEREREetF7z86XX36JP//8E7Vr15bGPD098d1336FHjx64cuUKZs2axdPQiYiIqFzQe89OUlIS8vPzi4zn5+dLV1B2cXFBdnZ26dMRERERlZLeZeett97Cxx9/jGPHjkljx44dw9ChQ9G2bVsAwKlTp+Dh4SFfSiIiIqIS0rvsLF++HFWrVkWTJk2gVquhVqvRtGlTVK1aFcuXLwcAWFpaYs6cObKHJSIiItKX3sfsODk5ISYmBufOncOFCxcAAHXr1kXdunWldd566y35EhIRERGVQokvKujt7Q1vb285sxARERHJrkRl57///sOmTZuQmJiIvLw8rWVz586VJRgRERGRHPQuO7GxsejatStq1aqFc+fOoUGDBrh27RqEEGjcuLEhMhIRERGVmN4HKIeHh+Ozzz7DqVOnYGZmhj///BM3btxA69at8f777xsiIxEREVGJ6V12EhIS0L9/fwCAsbExHjx4AEtLS0ybNg0zZ86UPSARERFRaehddiwsLKTjdJydnXH58mVpWVpamnzJiIiIiGSg9zE7b7zxBvbs2YN69eqhY8eOGDNmDE6dOoX169fjjTfeMERGIiIiohLTu+zMnTsXOTk5AICpU6ciJycHq1evhpeXF8/EIiIionJH77JTq1Yt6WsLCwssXbpU1kBEREREctL7mJ1atWrhzp07RcYzMjK0ihARERFReaB32bl27RoKCgqKjOfm5uLmzZuyhCIiIiKSi85vY23atEn6Ojo6GtbW1tL9goICxMbGwt3dXdZwRERERKWlc9np3r07AEClUiEkJERrmYmJCdzd3flJ50RERFTu6Fx2NBoNAMDDwwOHDh2Cvb29wUIRERERyUXvs7GuXr1qiBxEREREBlGiTz2PjY1FbGwsUlNTpT0+hX7++WdZghERERHJQe+yM3XqVEybNg1NmzaFs7MzVCqVIXIRERERyULvsrN06VJERkaiX79+hshDREREJCu9r7OTl5eH5s2bGyILERERkez0LjsfffQRfv/9d0NkISIiIpKd3m9jPXz4EMuWLcOOHTvg5+cHExMTreX8MFAiIiIqT/QuOydPnoS/vz8A4PTp01rLeLAyERERlTd6l524uDhD5CAiIiIyCL2P2Sl06dIlREdH48GDBwAAIYRsoYiIiIjkonfZuXPnDgIDA1GnTh107NgRSUlJAIBBgwZhzJgxsgckIiIiKg29y86oUaNgYmKCxMREVK5cWRrv2bMnoqKiZA1HREREVFp6H7Ozfft2REdHo0aNGlrjXl5euH79umzBiIiIiOSg956de/fuae3RKZSeng61Wi1LKCIiIiK56F12WrVqhZUrV0r3VSoVNBoNZs2ahbfeekvWcERERESlpffbWLNmzUJgYCAOHz6MvLw8jBs3DmfOnEF6ejr27t1riIxEREREJab3np0GDRrgwoULaNmyJbp164Z79+7h3XffxbFjx1C7dm1DZCQiIiIqsRJdZ8fa2hpffPEF1qxZg61bt+Lrr7+Gs7Oz3NkAADdv3kTfvn1hZ2cHc3Nz+Pr64vDhw9JyIQQmTZoEZ2dnmJubIygoCBcvXjRIFiIiIqp49C47ERERWLt2bZHxtWvXYsWKFbKEKnT37l20aNECJiYm2LZtG86ePYs5c+bA1tZWWmfWrFlYuHAhli5divj4eFhYWCA4OBgPHz6UNQsRERFVTHqXnRkzZsDe3r7IuIODA6ZPny5LqEIzZ86Eq6srIiIi8Prrr8PDwwPt27eX3i4TQmD+/Pn48ssv0a1bN/j5+WHlypW4desWNm7cKGsWIiIiqpj0LjuJiYnw8PAoMu7m5obExERZQhXatGkTmjZtivfffx8ODg5o1KgRfvrpJ2n51atXkZycjKCgIGnM2toazZo1w/79+2XNQkRERBWT3mXHwcEBJ0+eLDJ+4sQJ2NnZyRKq0JUrV7BkyRJ4eXkhOjoaQ4cOxYgRI6S3y5KTkwEAjo6OWo9zdHSUlj1Lbm4usrKytG5ERESkTHqfet67d2+MGDECVapUwZtvvgkA2LVrF0aOHIlevXrJGk6j0aBp06bS22ONGjXC6dOnsXTpUoSEhJR4uzNmzMDUqVPliklERETlmN57dr766is0a9YMgYGBMDc3h7m5Odq3b4+2bdvKfsyOs7MzfHx8tMbq1asnvV3m5OQEAEhJSdFaJyUlRVr2LOHh4cjMzJRuN27ckDU3ERERlR967dkRQiA5ORmRkZH4+uuvcfz4cel0cDc3N9nDtWjRAufPn9cau3DhgvRcHh4ecHJyQmxsLPz9/QEAWVlZiI+Px9ChQ4vdrlqt5kdbEBERvSL0Ljuenp44c+YMvLy84OXlZahcAB5/wnrz5s0xffp0fPDBBzh48CCWLVuGZcuWAXj8URVhYWH4+uuv4eXlBQ8PD0ycOBEuLi7o3r27QbMRERFRxaBX2TEyMoKXlxfu3Llj8KIDAK+99ho2bNiA8PBwTJs2DR4eHpg/fz769OkjrTNu3Djcu3cPQ4YMQUZGBlq2bImoqCiYmZkZPB8RERGVf3ofoPztt99i7NixWLJkCRo0aGCITFo6d+6Mzp07F7tcpVJh2rRpmDZtmsGzEBERUcWjd9np378/7t+/j4YNG8LU1BTm5uZay9PT02ULR0RERFRaeped+fPnGyAGERERkWHoXXZKc30bIiIiopetRJ96fvnyZXz55Zfo3bs3UlNTAQDbtm3DmTNnZA1HREREVFp6l51du3bB19cX8fHxWL9+PXJycgA8/riIyZMnyx6QiIiIqDT0LjsTJkzA119/jZiYGJiamkrjbdu2xYEDB2QNR0RERFRaepedU6dO4Z133iky7uDggLS0NFlCEREREclF77JjY2ODpKSkIuPHjh1D9erVZQlFREREJBe9y06vXr0wfvx4JCcnQ6VSQaPRYO/evfjss8/Qv39/Q2QkIiIiKjG9y8706dPh7e0NV1dX5OTkwMfHB2+++SaaN2+OL7/80hAZiYiIiEpM7+vsmJqa4qeffsKkSZNw6tQp5OTkoFGjRi/ls7KIiIiI9KVz2dFoNJg9ezY2bdqEvLw8BAYGYvLkyUU+LoKIiIioPNH5baxvvvkGn3/+OSwtLVG9enUsWLAAoaGhhsxGREREVGo6l52VK1fihx9+QHR0NDZu3IjNmzfjt99+g0ajMWQ+IiIiolLRuewkJiaiY8eO0v2goCCoVCrcunXLIMGIiIiI5KBz2cnPz4eZmZnWmImJCR49eiR7KCIiIiK56HyAshACAwYMgFqtlsYePnyITz75BBYWFtLY+vXr5U1IREREVAo6l52QkJAiY3379pU1DBEREZHcdC47ERERhsxBREREZBB6X0GZiIiIqCJh2SEiIiJFY9khIiIiRWPZISIiIkVj2SEiIiJF07vsrFixAn///bd0f9y4cbCxsUHz5s1x/fp1WcMRERERlZbeZWf69OnSJ53v378fixcvxqxZs2Bvb49Ro0bJHpCIiIioNHS+zk6hGzduwNPTEwCwceNG9OjRA0OGDEGLFi3Qpk0bufMRERERlYree3YsLS1x584dAMD27dvRrl07AICZmRkePHggbzoiIiKiUtJ7z067du3w0UcfoVGjRrhw4YL0SehnzpyBu7u73PmIiIiISkXvPTuLFy9G8+bNcfv2bfz555+ws7MDABw5cgS9e/eWPSARERFRaei1Zyc/Px8LFy7E+PHjUaNGDa1lU6dOlTUYERERkRz02rNjbGyMWbNmIT8/31B5iIiIiGSl99tYgYGB2LVrlyGyEBEREclO7wOUO3TogAkTJuDUqVNo0qQJLCwstJZ37dpVtnBEREREpaV32Rk2bBgAYO7cuUWWqVQqFBQUlD4VERERkUz0LjsajcYQOYiIiIgMolQfBPrw4UO5chAREREZhN5lp6CgAF999RWqV68OS0tLXLlyBQAwceJELF++XPaARERERKWhd9n55ptvEBkZiVmzZsHU1FQab9CgAf73v//JGo6IiIiotPQuOytXrsSyZcvQp08fVKpUSRpv2LAhzp07J2s4IiIiotLSu+zcvHlT+tTzJ2k0Gjx69EiWUERERERy0bvs+Pj44N9//y0yvm7dOjRq1EiWUERERERy0fvU80mTJiEkJAQ3b96ERqPB+vXrcf78eaxcuRJbtmwxREYiIiKiEtN7z063bt2wefNm7NixAxYWFpg0aRISEhKwefNmtGvXzhAZiYiIiEpM7z07ANCqVSvExMTInYWIiIhIdnrv2blx4wb+++8/6f7BgwcRFhaGZcuWyRqMiIiISA56l53/+7//Q1xcHAAgOTkZQUFBOHjwIL744gtMmzZN9oBEREREpaF32Tl9+jRef/11AMCaNWvg6+uLffv24bfffkNkZKTc+YiIiIhKRe+y8+jRI6jVagDAjh070LVrVwCAt7c3kpKS5E1HREREVEp6l5369etj6dKl+PfffxETE4O3334bAHDr1i3Y2dnJHpCIiIioNPQuOzNnzsSPP/6INm3aoHfv3mjYsCEAYNOmTdLbW0RERETlhd6nnrdp0wZpaWnIysqCra2tND5kyBBUrlxZ1nBEREREpVWi6+xUqlRJq+gAgLu7uxx5iIiIiGSlc9mxtbWFSqUqMm5tbY06dergs88+4xWUiYiIqNzRuezMnz//meMZGRk4cuQIOnfujHXr1qFLly5yZSMiIiIqNZ3LTkhIyHOX+/v7Y8aMGSw7REREVK7ofTZWcTp37oxz587JtTkiIiIiWchWdnJzc2FqairX5oiIiIhkIVvZWb58Ofz9/eXaHBEREZEsdD5mZ/To0c8cz8zMxNGjR3HhwgXs3r1btmBEREREctC57Bw7duyZ41ZWVmjXrh3Wr18PDw8P2YIRERERyUHnshMXF2fIHDr59ttvER4ejpEjR0qnwj98+BBjxozBqlWrkJubi+DgYPzwww9wdHQs27BERERULsh2zI6hHTp0CD/++CP8/Py0xkeNGoXNmzdj7dq12LVrF27duoV33323jFISERFReVMhyk5OTg769OmDn376SetjKjIzM7F8+XLMnTsXbdu2RZMmTRAREYF9+/bhwIEDZZiYiIiIyosKUXZCQ0PR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iMCAAQMAAPPmzYORkRF69OiB3NxcBAcH44cffnjJSYmIiKi8KtdlRwjxwnXMzMywePFiLF68+CUkIiIiooqmXB+zQ0RERFRaLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoLDtERESkaCw7REREpGgsO0RERKRoxmUdgMqnhISEso6gF3t7e9SsWbOsYxARUTnEskNaCnLuAioV+vbtW9ZR9GJmXhnnzyWw8BARUREsO6RFk5sDCAG7zmNgYuda1nF08ujODdzZMgdpaWksO0REVIRiys7ixYsxe/ZsJCcno2HDhli0aBFef/31so5VYZnYuULt5FnWMYiIiEpNEQcor169GqNHj8bkyZNx9OhRNGzYEMHBwUhNTS3raERERFTGFFF25s6di8GDB2PgwIHw8fHB0qVLUblyZfz8889lHY2IiIjKWIV/GysvLw9HjhxBeHi4NGZkZISgoCDs37+/DJPRy8YzyIiI6FkqfNlJS0tDQUEBHB0dtcYdHR1x7ty5Zz4mNzcXubm50v3MzEwAQFZWlqzZcnJyHj9f8iVo8h7Kum1DeXTnBoCKlTn31uOSU9HOIDNVm+HXX1YW+dkt74yMjKDRaMo6hl6Y+eVg5pejImZ2cnKCk5OT7Nst/HdbCPHc9Sp82SmJGTNmYOrUqUXGXV0Nc/bR3ejvDbJdQ6qImSuavNyH+OCDD8o6BhFRhZednQ1ra+til1f4smNvb49K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\u003d"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563048395_1939191288",
+      "id": "paragraph_1712563048395_1939191288",
+      "dateCreated": "2024-04-08 07:57:28.395",
+      "dateStarted": "2024-04-08 08:08:27.448",
+      "dateFinished": "2024-04-08 08:08:27.760",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\ndf_train_total.describe()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:27.848",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv\u003e\n\u003cstyle scoped\u003e\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n\u003c/style\u003e\n\u003ctable border\u003d\"1\" class\u003d\"dataframe\"\u003e\n  \u003cthead\u003e\n    \u003ctr style\u003d\"text-align: right;\"\u003e\n      \u003cth\u003e\u003c/th\u003e\n      \u003cth\u003euser_id\u003c/th\u003e\n      \u003cth\u003etotal_item\u003c/th\u003e\n    \u003c/tr\u003e\n  \u003c/thead\u003e\n  \u003ctbody\u003e\n    \u003ctr\u003e\n      \u003cth\u003ecount\u003c/th\u003e\n      \u003ctd\u003e69878.000000\u003c/td\u003e\n      \u003ctd\u003e69878.00000\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003emean\u003c/th\u003e\n      \u003ctd\u003e35782.217393\u003c/td\u003e\n      \u003ctd\u003e143.10733\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003estd\u003c/th\u003e\n      \u003ctd\u003e20613.909098\u003c/td\u003e\n      \u003ctd\u003e216.71258\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003emin\u003c/th\u003e\n      \u003ctd\u003e1.000000\u003c/td\u003e\n      \u003ctd\u003e20.00000\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e25%\u003c/th\u003e\n      \u003ctd\u003e17943.250000\u003c/td\u003e\n      \u003ctd\u003e35.00000\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e50%\u003c/th\u003e\n      \u003ctd\u003e35798.500000\u003c/td\u003e\n      \u003ctd\u003e69.00000\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e75%\u003c/th\u003e\n      \u003ctd\u003e53619.750000\u003c/td\u003e\n      \u003ctd\u003e156.00000\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003emax\u003c/th\u003e\n      \u003ctd\u003e71567.000000\u003c/td\u003e\n      \u003ctd\u003e7359.00000\u003c/td\u003e\n    \u003c/tr\u003e\n  \u003c/tbody\u003e\n\u003c/table\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563603965_23376697",
+      "id": "paragraph_1712563603965_23376697",
+      "dateCreated": "2024-04-08 08:06:43.965",
+      "dateStarted": "2024-04-08 08:08:27.849",
+      "dateFinished": "2024-04-08 08:08:28.058",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\n# Define the bins\nbins \u003d [0, 5, 100, 500, np.inf]\n\n# Define the labels for the bins\nlabels \u003d [\u00270-5\u0027, \u002711-100\u0027, \u0027101-500\u0027, \u0027500+\u0027]\n\n# Create a new column for the total_item ranges\ndf_train_total[\u0027total_item_range\u0027] \u003d pd.cut(df_train_total[\u0027total_item\u0027], bins\u003dbins, labels\u003dlabels)\ndf_train_total_sorted \u003d df_train_total.sort_values(by\u003d\u0027total_item_range\u0027)\n\n# Print the DataFrame to check the result\nprint(df_train_total_sorted)\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:28.149",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "       user_id  total_item total_item_range\n0            1          22           11-100\n41097    42099          51           11-100\n41098    42100          59           11-100\n41100    42102         100           11-100\n41103    42105          52           11-100\n...        ...         ...              ...\n4371      4523        1201             500+\n35892    36771        2358             500+\n14670    15061        2060             500+\n29507    30265         502             500+\n34938    35798         580             500+\n\n[69878 rows x 3 columns]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563054802_1059569088",
+      "id": "paragraph_1712563054802_1059569088",
+      "dateCreated": "2024-04-08 07:57:34.802",
+      "dateStarted": "2024-04-08 08:08:28.151",
+      "dateFinished": "2024-04-08 08:08:28.358",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\n# Create a histogram\nplt.hist(df_train_total_sorted[\u0027total_item_range\u0027], bins\u003d10, edgecolor\u003d\u0027black\u0027, weights\u003dnp.ones(total_users) / total_users * 100)\nplt.title(\u0027Distribution of Total Items per User\u0027)\nplt.xlabel(\u0027Total Items\u0027)\nplt.ylabel(\u0027Number of Users Percentage (%)\u0027)\nplt.show()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:28.451",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "IMG",
+            "data": "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gp555hmb58+fP18lSpTQzp079corr6h37956+umn1aBBA/3888966qmn9Pzzz+v69euSpGHDhum3337TypUrdfDgQc2aNUslSpTI7Y8RQG449CsoAfxPiI2NNXx9fa2Pg4ODjTFjxtgs88gjjxh9+vQxDMMwTpw4YUgy9uzZc9f1pqWlGUWLFjWWL19uHZNkfP3119k+Jzo62mjXrp31cePGjY1+/frZLPP2228bTz31lM3Y6dOnDUnWb7Vu3Lix0ahRI+v827dvG15eXsbzzz9vHTt37pwhydi2bZthGIbRpk0bo3v37nd9TQDyFkdkANyTK1eu6OzZs2rYsKHNeMOGDXXw4MG7PjchIUE9e/ZUWFiYfH195ePjo+TkZMXFxTk04y+//KKNGzfK29vbOlWuXFmSdPz4cetyNWrUsP67UKFC8vf3V/Xq1a1jgYGBkqTz589Lknr37q0vvvhCtWrV0pAhQ7R161aH5gaQM072BZBvoqOjdeHCBU2bNk0hISFyd3dXRESEUlNTHbqd5ORktWnTRuPHj880r1SpUtZ/u7q62syzWCw2YxaLRZKUnp4uSWrRooVOnTqlFStWaO3atWrWrJliYmL03nvvOTQ/gOxxRAbAPfHx8VFwcLC2bNliM75lyxaFh4dLktzc3CRJaWlpmZbp27evWrZsqapVq8rd3d3mBNzccHNzy7SdOnXq6MCBAypfvrwqVqxoM3l5ed3T9kqWLKno6Gh9+umnmjp1qubMmXNP6wNgDkUGwD179dVXNX78eH355Zc6fPiwXn/9de3du1f9+vWTJAUEBMjT09N6km1SUpIkKSwsTJ988okOHjyoHTt2qEuXLvL09LynLOXLl9eOHTt08uRJJSYmKj09XTExMbp48aI6d+6sn376ScePH9fq1avVvXv3TKXHjOHDh+ubb77RsWPHdODAAX377beqUqXKPeUHYA5FBsA969u3rwYOHKhBgwapevXqWrVqlZYtW6awsDBJUuHChTV9+nR9+OGHCg4OVrt27SRJc+fO1aVLl1SnTh09//zz6tu3rwICAu4py+DBg1WoUCGFh4erZMmSiouLsx4xSktL01NPPaXq1aurf//+8vPzk4tL7v9v0M3NTUOHDlWNGjX0xBNPqFChQvriiy/uKT8AcyyGYRj5HQIAACA3OCIDAACcFkUGAAA4LYoMAABwWhQZAADgtCgyAADAaVFkAACA06LIAAAAp0WRAQAATosiAwAAnBZFBgAAOC2KDAAAcFoUGQAA4LT+H8OMnIxYr4wrAAAAAElFTkSuQmCC"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563062188_663851411",
+      "id": "paragraph_1712563062188_663851411",
+      "dateCreated": "2024-04-08 07:57:42.188",
+      "dateStarted": "2024-04-08 08:08:28.452",
+      "dateFinished": "2024-04-08 08:08:28.715",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nmodel \u003d RankFM(factors\u003d20, loss\u003d\u0027warp\u0027, max_samples\u003d20, alpha\u003d0.01, sigma\u003d0.1, learning_rate\u003d0.10)\nmodel\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:28.752",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u003crankfm.rankfm.RankFM at 0x7af0d776f310\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563068538_1786378504",
+      "id": "paragraph_1712563068538_1786378504",
+      "dateCreated": "2024-04-08 07:57:48.538",
+      "dateStarted": "2024-04-08 08:08:28.754",
+      "dateFinished": "2024-04-08 08:08:28.961",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nmodel.fit(interactions\u003dinteractions_train, epochs\u003d100, verbose\u003dTrue)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:08:29.054",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\ntraining epoch: 0\nlog likelihood: -3828258.0\n\ntraining epoch: 1\nlog likelihood: -3664688.5\n\ntraining epoch: 2\nlog likelihood: -3568424.5\n\ntraining epoch: 3\nlog likelihood: -3508176.0\n\ntraining epoch: 4\nlog likelihood: -3470621.75\n\ntraining epoch: 5\nlog likelihood: -3446178.25\n\ntraining epoch: 6\nlog likelihood: -3428323.75\n\ntraining epoch: 7\nlog likelihood: -3420049.5\n\ntraining epoch: 8\nlog likelihood: -3410039.25\n\ntraining epoch: 9\nlog likelihood: -3404298.0\n\ntraining epoch: 10\nlog likelihood: -3400721.75\n\ntraining epoch: 11\nlog likelihood: -3395557.0\n\ntraining epoch: 12\nlog likelihood: -3392118.75\n\ntraining epoch: 13\nlog likelihood: -3391550.5\n\ntraining epoch: 14\nlog likelihood: -3390118.5\n\ntraining epoch: 15\nlog likelihood: -3385657.0\n\ntraining epoch: 16\nlog likelihood: -3386058.0\n\ntraining epoch: 17\nlog likelihood: -3385676.75\n\ntraining epoch: 18\nlog likelihood: -3383209.0\n\ntraining epoch: 19\nlog likelihood: -3383090.75\n\ntraining epoch: 20\nlog likelihood: -3382199.0\n\ntraining epoch: 21\nlog likelihood: -3382538.5\n\ntraining epoch: 22\nlog likelihood: -3380611.25\n\ntraining epoch: 23\nlog likelihood: -3380318.75\n\ntraining epoch: 24\nlog likelihood: -3379588.25\n\ntraining epoch: 25\nlog likelihood: -3379113.75\n\ntraining epoch: 26\nlog likelihood: -3378770.75\n\ntraining epoch: 27\nlog likelihood: -3379280.5\n\ntraining epoch: 28\nlog likelihood: -3377408.25\n\ntraining epoch: 29\nlog likelihood: -3378647.0\n\ntraining epoch: 30\nlog likelihood: -3378541.0\n\ntraining epoch: 31\nlog likelihood: -3376733.5\n\ntraining epoch: 32\nlog likelihood: -3377142.5\n\ntraining epoch: 33\nlog likelihood: -3376961.0\n\ntraining epoch: 34\nlog likelihood: -3377755.5\n\ntraining epoch: 35\nlog likelihood: -3375716.0\n\ntraining epoch: 36\nlog likelihood: -3376266.25\n\ntraining epoch: 37\nlog likelihood: -3376094.0\n\ntraining epoch: 38\nlog likelihood: -3376787.25\n\ntraining epoch: 39\nlog likelihood: -3374444.75\n\ntraining epoch: 40\nlog likelihood: -3376197.5\n\ntraining epoch: 41\nlog likelihood: -3377714.75\n\ntraining epoch: 42\nlog likelihood: -3374946.25\n\ntraining epoch: 43\nlog likelihood: -3375611.5\n\ntraining epoch: 44\nlog likelihood: -3375871.75\n\ntraining epoch: 45\nlog likelihood: -3373803.5\n\ntraining epoch: 46\nlog likelihood: -3375008.0\n\ntraining epoch: 47\nlog likelihood: -3375701.75\n\ntraining epoch: 48\nlog likelihood: -3376600.75\n\ntraining epoch: 49\nlog likelihood: -3375182.25\n\ntraining epoch: 50\nlog likelihood: -3375569.5\n\ntraining epoch: 51\nlog likelihood: -3375380.75\n\ntraining epoch: 52\nlog likelihood: -3375935.25\n\ntraining epoch: 53\nlog likelihood: -3375329.0\n\ntraining epoch: 54\nlog likelihood: -3375604.25\n\ntraining epoch: 55\nlog likelihood: -3374977.5\n\ntraining epoch: 56\nlog likelihood: -3375195.5\n\ntraining epoch: 57\nlog likelihood: -3375544.0\n\ntraining epoch: 58\nlog likelihood: -3375407.25\n\ntraining epoch: 59\nlog likelihood: -3373855.75\n\ntraining epoch: 60\nlog likelihood: -3375976.25\n\ntraining epoch: 61\nlog likelihood: -3373808.5\n\ntraining epoch: 62\nlog likelihood: -3374692.0\n\ntraining epoch: 63\nlog likelihood: -3374828.5\n\ntraining epoch: 64\nlog likelihood: -3375690.5\n\ntraining epoch: 65\nlog likelihood: -3375730.75\n\ntraining epoch: 66\nlog likelihood: -3376039.0\n\ntraining epoch: 67\nlog likelihood: -3373529.25\n\ntraining epoch: 68\nlog likelihood: -3374231.5\n\ntraining epoch: 69\nlog likelihood: -3375275.75\n\ntraining epoch: 70\nlog likelihood: -3372764.25\n\ntraining epoch: 71\nlog likelihood: -3373952.25\n\ntraining epoch: 72\nlog likelihood: -3374982.5\n\ntraining epoch: 73\nlog likelihood: -3375369.25\n\ntraining epoch: 74\nlog likelihood: -3375243.25\n\ntraining epoch: 75\nlog likelihood: -3374527.5\n\ntraining epoch: 76\nlog likelihood: -3374650.0\n\ntraining epoch: 77\nlog likelihood: -3374467.75\n\ntraining epoch: 78\nlog likelihood: -3374260.25\n\ntraining epoch: 79\nlog likelihood: -3374381.0\n\ntraining epoch: 80\nlog likelihood: -3374981.5\n\ntraining epoch: 81\nlog likelihood: -3373319.75\n\ntraining epoch: 82\nlog likelihood: -3373696.25\n\ntraining epoch: 83\nlog likelihood: -3374046.75\n\ntraining epoch: 84\nlog likelihood: -3374864.75\n\ntraining epoch: 85\nlog likelihood: -3373866.0\n\ntraining epoch: 86\nlog likelihood: -3373907.5\n\ntraining epoch: 87\nlog likelihood: -3375257.0\n\ntraining epoch: 88\nlog likelihood: -3373959.0\n\ntraining epoch: 89\nlog likelihood: -3373711.5\n\ntraining epoch: 90\nlog likelihood: -3373883.25\n\ntraining epoch: 91\nlog likelihood: -3373865.25\n\ntraining epoch: 92\nlog likelihood: -3373719.75\n\ntraining epoch: 93\nlog likelihood: -3373674.5\n\ntraining epoch: 94\nlog likelihood: -3373901.5\n\ntraining epoch: 95\nlog likelihood: -3375423.25\n\ntraining epoch: 96\nlog likelihood: -3374569.25\n\ntraining epoch: 97\nlog likelihood: -3374792.25\n\ntraining epoch: 98\nlog likelihood: -3374839.5\n\ntraining epoch: 99\nlog likelihood: -3374371.75\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563103951_1499245696",
+      "id": "paragraph_1712563103951_1499245696",
+      "dateCreated": "2024-04-08 07:58:23.952",
+      "dateStarted": "2024-04-08 08:08:29.055",
+      "dateFinished": "2024-04-08 08:34:30.507",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nvalid_scores \u003d model.predict(interactions_valid, cold_start\u003d\u0027nan\u0027) \nprint(valid_scores.shape)\npd.Series(valid_scores).describe()\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:34:30.599",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "(2499321,)\ncount    2.499274e+06\nmean     1.061945e+00\nstd      1.192589e+00\nmin     -5.676000e+00\n25%      2.167714e-01\n50%      1.057545e+00\n75%      1.891772e+00\nmax      5.076272e+00\ndtype: float64"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563114873_339797197",
+      "id": "paragraph_1712563114873_339797197",
+      "dateCreated": "2024-04-08 07:58:34.873",
+      "dateStarted": "2024-04-08 08:34:30.600",
+      "dateFinished": "2024-04-08 08:34:33.412",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nvalid_recommendations \u003d model.recommend(valid_users, n_items\u003d10, filter_previous\u003dFalse, cold_start\u003d\u0027nan\u0027)\nvalid_recommendations.head()\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:34:33.502",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv\u003e\n\u003cstyle scoped\u003e\n    .dataframe tbody tr th:only-of-type {\n        vertical-align: middle;\n    }\n\n    .dataframe tbody tr th {\n        vertical-align: top;\n    }\n\n    .dataframe thead th {\n        text-align: right;\n    }\n\u003c/style\u003e\n\u003ctable border\u003d\"1\" class\u003d\"dataframe\"\u003e\n  \u003cthead\u003e\n    \u003ctr style\u003d\"text-align: right;\"\u003e\n      \u003cth\u003e\u003c/th\u003e\n      \u003cth\u003e0\u003c/th\u003e\n      \u003cth\u003e1\u003c/th\u003e\n      \u003cth\u003e2\u003c/th\u003e\n      \u003cth\u003e3\u003c/th\u003e\n      \u003cth\u003e4\u003c/th\u003e\n      \u003cth\u003e5\u003c/th\u003e\n      \u003cth\u003e6\u003c/th\u003e\n      \u003cth\u003e7\u003c/th\u003e\n      \u003cth\u003e8\u003c/th\u003e\n      \u003cth\u003e9\u003c/th\u003e\n    \u003c/tr\u003e\n  \u003c/thead\u003e\n  \u003ctbody\u003e\n    \u003ctr\u003e\n      \u003cth\u003e1\u003c/th\u003e\n      \u003ctd\u003e595\u003c/td\u003e\n      \u003ctd\u003e588\u003c/td\u003e\n      \u003ctd\u003e344\u003c/td\u003e\n      \u003ctd\u003e153\u003c/td\u003e\n      \u003ctd\u003e339\u003c/td\u003e\n      \u003ctd\u003e480\u003c/td\u003e\n      \u003ctd\u003e586\u003c/td\u003e\n      \u003ctd\u003e590\u003c/td\u003e\n      \u003ctd\u003e296\u003c/td\u003e\n      \u003ctd\u003e165\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e2\u003c/th\u003e\n      \u003ctd\u003e260\u003c/td\u003e\n      \u003ctd\u003e736\u003c/td\u003e\n      \u003ctd\u003e653\u003c/td\u003e\n      \u003ctd\u003e733\u003c/td\u003e\n      \u003ctd\u003e1356\u003c/td\u003e\n      \u003ctd\u003e1210\u003c/td\u003e\n      \u003ctd\u003e648\u003c/td\u003e\n      \u003ctd\u003e780\u003c/td\u003e\n      \u003ctd\u003e786\u003c/td\u003e\n      \u003ctd\u003e494\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e3\u003c/th\u003e\n      \u003ctd\u003e6539\u003c/td\u003e\n      \u003ctd\u003e3996\u003c/td\u003e\n      \u003ctd\u003e4993\u003c/td\u003e\n      \u003ctd\u003e4963\u003c/td\u003e\n      \u003ctd\u003e1246\u003c/td\u003e\n      \u003ctd\u003e6377\u003c/td\u003e\n      \u003ctd\u003e7153\u003c/td\u003e\n      \u003ctd\u003e5445\u003c/td\u003e\n      \u003ctd\u003e4246\u003c/td\u003e\n      \u003ctd\u003e1704\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e4\u003c/th\u003e\n      \u003ctd\u003e296\u003c/td\u003e\n      \u003ctd\u003e590\u003c/td\u003e\n      \u003ctd\u003e595\u003c/td\u003e\n      \u003ctd\u003e480\u003c/td\u003e\n      \u003ctd\u003e344\u003c/td\u003e\n      \u003ctd\u003e592\u003c/td\u003e\n      \u003ctd\u003e356\u003c/td\u003e\n      \u003ctd\u003e457\u003c/td\u003e\n      \u003ctd\u003e454\u003c/td\u003e\n      \u003ctd\u003e150\u003c/td\u003e\n    \u003c/tr\u003e\n    \u003ctr\u003e\n      \u003cth\u003e5\u003c/th\u003e\n      \u003ctd\u003e608\u003c/td\u003e\n      \u003ctd\u003e17\u003c/td\u003e\n      \u003ctd\u003e1225\u003c/td\u003e\n      \u003ctd\u003e296\u003c/td\u003e\n      \u003ctd\u003e593\u003c/td\u003e\n      \u003ctd\u003e509\u003c/td\u003e\n      \u003ctd\u003e25\u003c/td\u003e\n      \u003ctd\u003e150\u003c/td\u003e\n      \u003ctd\u003e590\u003c/td\u003e\n      \u003ctd\u003e36\u003c/td\u003e\n    \u003c/tr\u003e\n  \u003c/tbody\u003e\n\u003c/table\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563171538_796814290",
+      "id": "paragraph_1712563171538_796814290",
+      "dateCreated": "2024-04-08 07:59:31.538",
+      "dateStarted": "2024-04-08 08:34:33.503",
+      "dateFinished": "2024-04-08 08:35:39.826",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\n%%time\nk\u003d20\n\nmodel_hit_rate \u003d hit_rate(model, interactions_valid, k\u003dk)\nmodel_reciprocal_rank \u003d reciprocal_rank(model, interactions_valid, k\u003dk)\nmodel_dcg \u003d discounted_cumulative_gain(model, interactions_valid, k\u003dk)\nmodel_precision \u003d precision(model, interactions_valid, k\u003dk)\nmodel_recall \u003d recall(model, interactions_valid, k\u003dk)\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:35:39.843",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "CPU times: user 5min 57s, sys: 491 ms, total: 5min 58s\nWall time: 5min 58s\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563188627_733978610",
+      "id": "paragraph_1712563188627_733978610",
+      "dateCreated": "2024-04-08 07:59:48.627",
+      "dateStarted": "2024-04-08 08:35:39.844",
+      "dateFinished": "2024-04-08 08:41:38.231",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 08:41:38.262",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712563262620_579622933",
+      "id": "paragraph_1712563262620_579622933",
+      "dateCreated": "2024-04-08 08:01:02.620",
+      "dateStarted": "2024-04-08 08:41:38.264",
+      "dateFinished": "2024-04-08 08:41:38.471",
+      "status": "FINISHED"
+    }
+  ],
+  "name": "RankFM-Eval_spark",
+  "id": "2JU82EVB8",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {
+    "isRunning": false
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "paragraphs": [
+    {
+      "text": "%python\n\nimport os\nos.environ[\u0027CUDA_VISIBLE_DEVICES\u0027] \u003d \"0\"\n\nimport tensorflow as tf\ndevice_name \u003d tf.test.gpu_device_name()\nif device_name !\u003d \u0027/device:GPU:0\u0027:\n  raise SystemError(\u0027GPU device not found\u0027)\nprint(\u0027Found GPU at: {}\u0027.format(device_name))",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:53:47.227",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Found GPU at: /device:GPU:0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712462439019_769112636",
+      "id": "paragraph_1712462439019_769112636",
+      "dateCreated": "2024-04-07 04:00:39.019",
+      "dateStarted": "2024-04-08 06:53:47.228",
+      "dateFinished": "2024-04-08 06:53:47.361",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-07 04:00:44.051",
+      "progress": 0,
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712462444051_1997927090",
+      "id": "paragraph_1712462444051_1997927090",
+      "dateCreated": "2024-04-07 04:00:44.051",
+      "status": "READY"
+    }
+  ],
+  "name": "Tensorflow Test GPU",
+  "id": "2JUAG881U",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {}
+}

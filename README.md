@@ -95,7 +95,7 @@ By default, docker provides an interface as a sock file, so you need to modify t
 To listen on both - socket and tcp:
 
 create folder: /etc/systemd/system/docker.socket.d
-create file 10-tcp.conf inside the folder with the content:
+create file 10-tcp.conf `touch /etc/systemd/system/docker.socket.d` and copy this:
 
 ```
 [Socket]
@@ -105,10 +105,10 @@ ListenStream=0.0.0.0:2375
 restart everything:
 
 ```
-systemctl daemon-reload
-systemctl stop docker.socket
-systemctl stop docker.service
-systemctl start docker
+sudo systemctl daemon-reload
+sudo systemctl stop docker.socket
+sudo systemctl stop docker.service
+sudo systemctl start docker
 ```
 
 Plus are: it us user space systemd drop-in, i.e. would not disappear after upgrade of the docker
@@ -182,13 +182,12 @@ deploy:
         capabilities: [gpu]
 ```
 
-You can read details at <https://docs.docker.com/compose/gpu-support/>
+You can read details at <https://docs.docker.com/compose/gpu-support/> 
 
-
-If not, running the docker and go inside it `docker exec -it zeppelin bash`
+If not, running the docker and go inside it `docker exec -it zeppelin bash` and install NVIDIA driver
 
 ```
-wget -c https://us.download.nvidia.com/XFree86/Linux-x86_64/550.67/NVIDIA-Linux-x86_64-550.67.run --accept-license --ui=none --no-kernel-module --no-questions 
+wget -c https://us.download.nvidia.com/XFree86/Linux-x86_64/550.67/NVIDIA-Linux-x86_64-550.67.run 
 ```
 
 ## 6. CUDA and CUDNN Installation in Docker Zeppelin
@@ -204,9 +203,10 @@ wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/
 Next, download CUDNN 8.9.7 and extract it as folder `cudnn`
 
 ```
-wget https://developer.nvidia.com/downloads/compute/cudnn/secure/8.9.7/local_installers/11.x/cudnn-linux-x86_64-8.9.7.29_cuda11-archive.tar.xz
-tar -xvvf cudnn-linux-x86_64-8.9.7.29_cuda11-archive.tar.xz
-mv cudnn-linux-x86_64-8.9.7.29_cuda11-archive cudnn
+https://developer.download.nvidia.com/compute/redist/cudnn/v8.7.0/local_installers/11.8/cudnn-linux-x86_64-8.7.0.84_cuda11-archive.tar.xz
+tar -xvvf cudnn-linux-x86_64-8.7.0.84_cuda11-archive.tar.xz
+mv cudnn-linux-x86_64-8.7.0.84_cuda11-archive cudnn
+rm -rf cudnn-linux-x86_64-8.7.0.84_cuda11-archive.tar.xz
 ```
 
 You can see in `zeppelin/Dockerfile` there is operation to copy this into Docker and set installation
@@ -215,9 +215,8 @@ You can see in `zeppelin/Dockerfile` there is operation to copy this into Docker
 
 For Recommendation System and using TFX, the separated requirements located at `zeppelin/tfx_requirements.txt`
 
-
-## 8. Notes
-You can modify and doing installation inside the Docker:
+**For first-time installation**: Comment all needs to install from Dockerfile.
+Run the `docker compose up --build` and later go inside Docker and execute this.
 
 `pip install --cache-dir pip-cache -r requirements.txt`
 

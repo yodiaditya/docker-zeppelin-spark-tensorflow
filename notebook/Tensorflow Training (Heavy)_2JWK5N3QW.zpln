@@ -1,0 +1,1255 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n# Chapter 6: Teaching Machines to See\n\n## Image Classification\n\nIn this, we will train a complex convolution neural network on an image classification dataset.\n\n\n\u003ctable align\u003d\"left\"\u003e\n    \u003ctd\u003e\n        \u003ca target\u003d\"_blank\" href\u003d\"https://colab.research.google.com/github/thushv89/manning_tf2_in_action/blob/master/Ch06-Image-Classification-with-CNNs/6.1.Image_Classification.ipynb\"\u003e\u003cimg src\u003d\"https://www.tensorflow.org/images/colab_logo_32px.png\" /\u003eRun in Google Colab\u003c/a\u003e\n    \u003c/td\u003e\n\u003c/table\u003e",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:02.204",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch1\u003eChapter 6: Teaching Machines to See\u003c/h1\u003e\n\u003ch2\u003eImage Classification\u003c/h2\u003e\n\u003cp\u003eIn this, we will train a complex convolution neural network on an image classification dataset.\u003c/p\u003e\n\u003ctable align\u003d\"left\"\u003e\n    \u003ctd\u003e\n        \u003ca target\u003d\"_blank\" href\u003d\"https://colab.research.google.com/github/thushv89/manning_tf2_in_action/blob/master/Ch06-Image-Classification-with-CNNs/6.1.Image_Classification.ipynb\"\u003e\u003cimg src\u003d\"https://www.tensorflow.org/images/colab_logo_32px.png\" /\u003eRun in Google Colab\u003c/a\u003e\n    \u003c/td\u003e\n\u003c/table\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_1682307566",
+      "id": "20240406-193933_566450674",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:02.208",
+      "dateFinished": "2024-04-08 06:54:02.212",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Importing necessary libraries",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:02.307",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eImporting necessary libraries\u003c/h2\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_1378957815",
+      "id": "20240406-193933_1329909024",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:02.311",
+      "dateFinished": "2024-04-08 06:54:02.313",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\nimport tensorflow as tf\nimport tensorflow_hub as hub\nimport requests\nimport zipfile\nimport requests\nimport os\nimport time\nimport pandas as pd\nimport random\nimport shutil\nfrom tensorflow.keras.preprocessing.image import ImageDataGenerator\nimport os\nfrom tensorflow.keras.layers import Input, Conv2D, MaxPool2D, AvgPool2D, Dense, Concatenate, Flatten, Lambda, Dropout\nfrom tensorflow.keras.models import Model\nfrom tensorflow.keras.losses import CategoricalCrossentropy\nimport tensorflow.keras.backend as K\nfrom tensorflow.keras.callbacks import EarlyStopping, CSVLogger\nimport numpy as np\nfrom PIL import Image\nimport tensorflow.keras.backend as K\nimport pickle\nfrom tensorflow.keras.models import load_model, Model\n\ndef fix_random_seed(seed):\n    try:\n        np.random.seed(seed)\n    except NameError:\n        print(\"Warning: Numpy is not imported. Setting the seed for Numpy failed.\")\n    try:\n        tf.random.set_seed(seed)\n    except NameError:\n        print(\"Warning: TensorFlow is not imported. Setting the seed for TensorFlow failed.\")\n    try:\n        random.seed(seed)\n    except NameError:\n        print(\"Warning: random module is not imported. Setting the seed for random failed.\")\n\nrandom_seed \u003d 4321\n# Fixing the random seed\nfix_random_seed(random_seed)\n\ngpus \u003d tf.config.experimental.list_physical_devices(\u0027GPU\u0027)\nif gpus:\n    try:\n        # Currently, memory growth needs to be the same across GPUs\n        for gpu in gpus:\n            tf.config.experimental.set_memory_growth(gpu, True)\n    except:\n        print(\"Couldn\u0027t set memory_growth\")\n        pass",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:02.411",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_115762007",
+      "id": "20240406-193933_1407387746",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:02.414",
+      "dateFinished": "2024-04-08 06:54:02.429",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Downloading data\n\nFor this chapter, we\u0027re going to use the tiny-imagenet dataset (200 categories of objects). This is a simplified version of the bigger and harder imagenet dataset (1000 categories of objects).",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:02.514",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eDownloading data\u003c/h2\u003e\n\u003cp\u003eFor this chapter, we\u0026rsquo;re going to use the tiny-imagenet dataset (200 categories of objects). This is a simplified version of the bigger and harder imagenet dataset (1000 categories of objects).\u003c/p\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_334064447",
+      "id": "20240406-193933_115342959",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:02.517",
+      "dateFinished": "2024-04-08 06:54:02.520",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n#Section 6.1 \n\nimport os\nimport requests\nimport zipfile\n\n# Retrieve the data\nif not os.path.exists(os.path.join(\u0027data\u0027,\u0027tiny-imagenet-200.zip\u0027)):\n    url \u003d \"http://cs231n.stanford.edu/tiny-imagenet-200.zip\"\n    # Get the file from web\n    r \u003d requests.get(url)\n\n    if not os.path.exists(\u0027data\u0027):\n        os.mkdir(\u0027data\u0027)\n    \n    # Write to a file\n    with open(os.path.join(\u0027data\u0027,\u0027tiny-imagenet-200.zip\u0027), \u0027wb\u0027) as f:\n        f.write(r.content)\nelse:\n    print(\"The zip file already exists.\")\n    \nif not os.path.exists(os.path.join(\u0027data\u0027, \u0027tiny-imagenet-200\u0027)):\n    with zipfile.ZipFile(os.path.join(\u0027data\u0027,\u0027tiny-imagenet-200.zip\u0027), \u0027r\u0027) as zip_ref:\n        zip_ref.extractall(\u0027data\u0027)\nelse:\n    print(\"The extracted data already exists\")",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:02.617",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_1456625698",
+      "id": "20240406-193933_1054627450",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:02.620",
+      "dateFinished": "2024-04-08 06:54:44.291",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Read the label information of the data\n\nThe classes in tiny-imagenet are coded by an id (known as `wnid` (WordNetID)). Here we will decode these IDs to get class descriptions of each ID, so we know what we\u0027re dealing with",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.347",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eRead the label information of the data\u003c/h2\u003e\n\u003cp\u003eThe classes in tiny-imagenet are coded by an id (known as \u003ccode\u003ewnid\u003c/code\u003e (WordNetID)). Here we will decode these IDs to get class descriptions of each ID, so we know what we\u0026rsquo;re dealing with\u003c/p\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_893785762",
+      "id": "20240406-193933_235506679",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:44.352",
+      "dateFinished": "2024-04-08 06:54:44.356",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n#Section 6.1\n#Code listing 6.1\n\nimport os\nimport pandas as pd\n\n# The file paths we\u0027re going to use\ndata_dir \u003d os.path.join(\u0027data\u0027, \u0027tiny-imagenet-200\u0027)\nwnids_path \u003d os.path.join(data_dir, \u0027wnids.txt\u0027)\nwords_path \u003d os.path.join(data_dir, \u0027words.txt\u0027)\n\ndef get_tiny_imagenet_classes(wnids_path, words_path):\n    \n    # Read the csv files\n    # wninds.txt contains the wnids of the data in the dataset\n    wnids \u003d pd.read_csv(wnids_path, header\u003dNone, squeeze\u003dTrue)\n    # words.txt contains a mapping from wnid to the class description\n    words \u003d pd.read_csv(words_path, sep\u003d\u0027\\t\u0027, index_col\u003d0, header\u003dNone)\n    # Get only the class descriptions corresponding to the wnids in the dataset\n    words_200 \u003d words.loc[wnids].rename({1:\u0027class\u0027}, axis\u003d1)\n    \n    words_200.index.name \u003d \u0027wnid\u0027\n    return words_200.reset_index()\n\nlabels \u003d get_tiny_imagenet_classes(wnids_path, words_path)\nlabels.head(n\u003d25)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.452",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "\u003cstdin\u003e:17: FutureWarning: The squeeze argument has been deprecated and will be removed in a future version. Append .squeeze(\"columns\") to the call to squeeze.\n\n\n         wnid                                              class\n0   n02124075                                       Egyptian cat\n1   n04067472                                               reel\n2   n04540053                                         volleyball\n3   n04099969                              rocking chair, rocker\n4   n07749582                                              lemon\n5   n01641577                         bullfrog, Rana catesbeiana\n6   n02802426                                         basketball\n7   n09246464                              cliff, drop, drop-off\n8   n07920052                                           espresso\n9   n03970156                          plunger, plumber\u0027s helper\n10  n03891332                                      parking meter\n11  n02106662  German shepherd, German shepherd dog, German p...\n12  n03201208                                dining table, board\n13  n02279972  monarch, monarch butterfly, milkweed butterfly...\n14  n02132136                    brown bear, bruin, Ursus arctos\n15  n04146614                                         school bus\n16  n07873807                                   pizza, pizza pie\n17  n02364673                           guinea pig, Cavia cobaya\n18  n04507155                                           umbrella\n19  n03854065                                  organ, pipe organ\n20  n03838899                            oboe, hautboy, hautbois\n21  n03733131                                            maypole\n22  n01443537                        goldfish, Carassius auratus\n23  n07875152                                             potpie\n24  n03544143                                          hourglass\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_1833756021",
+      "id": "20240406-193933_1725276597",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:44.455",
+      "dateFinished": "2024-04-08 06:54:44.540",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## How many training instances for each class are there?\n\n**Note**: If you run this after separating out the validation data, you\u0027ll see 450 instead of 500 in the `n_train` column.",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.555",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eHow many training instances for each class are there?\u003c/h2\u003e\n\u003cp\u003e\u003cstrong\u003eNote\u003c/strong\u003e: If you run this after separating out the validation data, you\u0026rsquo;ll see 450 instead of 500 in the \u003ccode\u003en_train\u003c/code\u003e column.\u003c/p\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_254235793",
+      "id": "20240406-193933_201727870",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:44.560",
+      "dateFinished": "2024-04-08 06:54:44.564",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n#Section 6.1\n\nimport os\ndef get_image_count(data_dir):  \n    \"\"\" Counts the number of jpeg files in a given folder\"\"\"\n    if not os.path.exists(data_dir):\n        return 0\n    return len([f for f in os.listdir(data_dir) if f.lower().endswith(\u0027jpeg\u0027)])\n    \n# Here we use the apply function in conjunction with the get_image_count to get the count of images in each\n# subfolder in the train directory\nlabels[\"n_train\"] \u003d labels[\"wnid\"].apply(lambda x: get_image_count(os.path.join(data_dir, \u0027train\u0027, x, \u0027images\u0027)))\nlabels.head()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.660",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "        wnid                  class  n_train\n0  n02124075           Egyptian cat      500\n1  n04067472                   reel      500\n2  n04540053             volleyball      500\n3  n04099969  rocking chair, rocker      500\n4  n07749582                  lemon      500\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373483_1265705525",
+      "id": "20240406-193933_1295585810",
+      "dateCreated": "2024-04-06 19:39:33.483",
+      "dateStarted": "2024-04-08 06:54:44.665",
+      "dateFinished": "2024-04-08 06:54:44.709",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Look at summary statistics of the `n_train` column\n\nSummary statistics is a great way to get an instant view of a column in a dataframe. It gives us important information like mean/standard deviation, etc.",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.764",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eLook at summary statistics of the \u003ccode\u003en_train\u003c/code\u003e column\u003c/h2\u003e\n\u003cp\u003eSummary statistics is a great way to get an instant view of a column in a dataframe. It gives us important information like mean/standard deviation, etc.\u003c/p\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_787346667",
+      "id": "20240406-193933_1912084772",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:44.768",
+      "dateFinished": "2024-04-08 06:54:44.771",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\nlabels[\"n_train\"].describe()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.868",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "count    200.0\nmean     500.0\nstd        0.0\nmin      500.0\n25%      500.0\n50%      500.0\n75%      500.0\nmax      500.0\nName: n_train, dtype: float64\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_860849248",
+      "id": "20240406-193933_1750033107",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:44.871",
+      "dateFinished": "2024-04-08 06:54:44.877",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Understanding the image dimensions in the dataset\n\nBefore moving on to modelling we need to understand the image dimensions (height and width). ",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:44.971",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eUnderstanding the image dimensions in the dataset\u003c/h2\u003e\n\u003cp\u003eBefore moving on to modelling we need to understand the image dimensions (height and width).\u003c/p\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1963689275",
+      "id": "20240406-193933_1156092142",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:44.974",
+      "dateFinished": "2024-04-08 06:54:44.977",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n#Section 6.1\n#Code listing 6.2\n\nimport os\nfrom PIL import Image\nimport pandas as pd\n\n# A list that will hold image height and width information\nimage_sizes \u003d []\n\n# We will only look at the first 25 directories (to save time)\nfor wnid in labels[\"wnid\"].iloc[:25]:\n    img_dir \u003d os.path.join(\u0027data\u0027, \u0027tiny-imagenet-200\u0027, \u0027train\u0027, wnid, \u0027images\u0027)\n    for f in os.listdir(img_dir):\n        # Only read the file if ends with JPEG\n        if f.endswith(\u0027JPEG\u0027):\n            # Append the height and width to the list\n            # e.g. [(img1.width, img1.height), (img2.width, img2.height), ...]\n            image_sizes.append(Image.open(os.path.join(img_dir, f)).size)\n\n# Using the format of image_sizes, we can directly create a dataframe\nimg_df \u003d pd.DataFrame.from_records(image_sizes)\nimg_df.columns \u003d [\"width\", \"height\"]\n# Getting summary statistics of all columns\nimg_df.describe()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:45.074",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "         width   height\ncount  12500.0  12500.0\nmean      64.0     64.0\nstd        0.0      0.0\nmin       64.0     64.0\n25%       64.0     64.0\n50%       64.0     64.0\n75%       64.0     64.0\nmax       64.0     64.0\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_2100890763",
+      "id": "20240406-193933_1095017443",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:45.078",
+      "dateFinished": "2024-04-08 06:54:45.625",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Bonus: Getting information about pixel values of the images",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:45.678",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eBonus: Getting information about pixel values of the images\u003c/h2\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_2072516209",
+      "id": "20240406-193933_1883550678",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:45.681",
+      "dateFinished": "2024-04-08 06:54:45.684",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\nimport os\nimport numpy as np\nfrom PIL import Image\nimages \u003d []\nfor wnid in labels[\"wnid\"].iloc[:2]:\n    img_dir \u003d os.path.join(\u0027data\u0027, \u0027tiny-imagenet-200\u0027, \u0027train\u0027, wnid, \u0027images\u0027)\n    for f in os.listdir(img_dir)[:10]:\n        if f.endswith(\u0027JPEG\u0027):\n            img \u003d np.array(Image.open(os.path.join(img_dir, f)))\n            images.append((img.min(), img.max(), img.mean()))\n\nimg_df \u003d pd.DataFrame.from_records(images)\nimg_df.columns \u003d [\"Min\", \"Max\", \"Mean\"]\nimg_df.describe()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:45.781",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "             Min         Max        Mean\ncount  20.000000   20.000000   20.000000\nmean    1.050000  249.050000  114.586959\nstd     4.695743   17.346242   31.969972\nmin     0.000000  197.000000   55.855306\n25%     0.000000  255.000000   93.717753\n50%     0.000000  255.000000  114.836304\n75%     0.000000  255.000000  133.178833\nmax    21.000000  255.000000  186.408203\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1953992085",
+      "id": "20240406-193933_1661865719",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:45.785",
+      "dateFinished": "2024-04-08 06:54:45.800",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Creating the data generators\n\nIn the dataset, we currently have a,\n\n* Training set: `train` directory\n* Testing set: `val` directory\n\nBut to properly train a model we need three datasets,\n\n* Training set - Used to train the model\n* Validation set - Used to continuously monitor model performance while training\n* Testing set - Used to test the model, only after training finishes\n\nTherefore, we will separate a 10% from training data and feed this data through as a separate generator",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:45.884",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eCreating the data generators\u003c/h2\u003e\n\u003cp\u003eIn the dataset, we currently have a,\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eTraining set: \u003ccode\u003etrain\u003c/code\u003e directory\u003c/li\u003e\n\u003cli\u003eTesting set: \u003ccode\u003eval\u003c/code\u003e directory\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eBut to properly train a model we need three datasets,\u003c/p\u003e\n\u003cul\u003e\n\u003cli\u003eTraining set - Used to train the model\u003c/li\u003e\n\u003cli\u003eValidation set - Used to continuously monitor model performance while training\u003c/li\u003e\n\u003cli\u003eTesting set - Used to test the model, only after training finishes\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eTherefore, we will separate a 10% from training data and feed this data through as a separate generator\u003c/p\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_388568590",
+      "id": "20240406-193933_1675730328",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:45.888",
+      "dateFinished": "2024-04-08 06:54:45.896",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n#Section 6.2\n\nfrom functools import partial\n\ndef get_test_labels_df(test_labels_path):\n    \"\"\" Reading the test data labels for all files in the test set as a data frame \"\"\"\n    test_df \u003d pd.read_csv(test_labels_path, sep\u003d\u0027\\t\u0027, index_col\u003dNone, header\u003dNone)\n    test_df \u003d test_df.iloc[:,[0,1]].rename({0:\"filename\", 1:\"class\"}, axis\u003d1)\n    return test_df\n\ndef get_train_valid_test_data_generators(batch_size, target_size):\n    # Define a Keras ImageDataGenerator with image centering (subtract mean)\n    \n    image_gen \u003d ImageDataGenerator(samplewise_center\u003dTrue, validation_split\u003d0.1)\n\n    # Define a training data generator\n    partial_flow_func \u003d partial(\n        image_gen.flow_from_directory, \n        directory\u003dos.path.join(\u0027data\u0027,\u0027tiny-imagenet-200\u0027, \u0027train\u0027), \n        target_size\u003dtarget_size, classes\u003dNone,\n        class_mode\u003d\u0027categorical\u0027, batch_size\u003dbatch_size, \n        shuffle\u003dTrue, seed\u003drandom_seed)\n    \n    # Get the training data subset\n    train_gen \u003d partial_flow_func(subset\u003d\u0027training\u0027)\n    # Get the validation data subset\n    valid_gen \u003d partial_flow_func(subset\u003d\u0027validation\u0027)\n    \n    \n    # Define a testing data generator\n    # This function uses flow_from_dataframe instead of flow_from_directory\n    test_df \u003d get_test_labels_df(os.path.join(\u0027data\u0027,\u0027tiny-imagenet-200\u0027,  \u0027val\u0027, \u0027val_annotations.txt\u0027))\n    test_gen \u003d image_gen.flow_from_dataframe(\n        test_df, directory\u003dos.path.join(\u0027data\u0027,\u0027tiny-imagenet-200\u0027,  \u0027val\u0027, \u0027images\u0027), target_size\u003dtarget_size, classes\u003dNone,\n        class_mode\u003d\u0027categorical\u0027, batch_size\u003dbatch_size, shuffle\u003dFalse\n    )\n    return train_gen, valid_gen, test_gen\n\ndef data_gen_aux(gen):    \n    # We need to modify our standard data generators to output the same target three times\n    for x,y in gen:        \n        yield x,(y,y,y)\n\nbatch_size \u003d 128\ntarget_size \u003d (56, 56)\n# Getting the train,valid, test data generators\ntrain_gen, valid_gen, test_gen \u003d get_train_valid_test_data_generators(batch_size, target_size)\n# Modifying the data generators to fit the model targets\ntrain_gen_aux \u003d data_gen_aux(train_gen)\nvalid_gen_aux \u003d data_gen_aux(valid_gen)\ntest_gen_aux \u003d data_gen_aux(test_gen)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:45.988",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Found 90000 images belonging to 200 classes.\nFound 10000 images belonging to 200 classes.\nFound 10000 validated image filenames belonging to 200 classes.\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_356210179",
+      "id": "20240406-193933_123630012",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:45.992",
+      "dateFinished": "2024-04-08 06:54:47.689",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Validating the consistency of validation data",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:47.692",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eValidating the consistency of validation data\u003c/h2\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_22336717",
+      "id": "20240406-193933_1381087362",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:47.696",
+      "dateFinished": "2024-04-08 06:54:47.698",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\nfrom itertools import tee\nall_labels \u003d []\nn_trials \u003d 10\n\nvalid_gen_test \u003d tee(valid_gen, n_trials)\n\nfor i in range(n_trials):    \n    labels \u003d []\n    for j in range(5):\n        _, ohe \u003d next(valid_gen_test[i])\n        # Convert one hot encoded to class labels\n        labels.append(np.argmax(ohe, axis\u003d-1))\n        \n    # Concat all labels\n    labels \u003d np.reshape(np.concatenate(labels, axis\u003d0), (1,-1))        \n    all_labels.append(labels)\n\n# Concat all labels accross all trials\nall_labels \u003d np.concatenate(all_labels, axis\u003d0)\n\n# Assert the labels are equal across all trials\nassert np.all(np.all(all_labels \u003d\u003d all_labels[0,:], axis\u003d0)), \"Labels across multiple trials were not equal\"\nprint(\"Successful! Labels across all trials were consistent.\")",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:47.796",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Successful! Labels across all trials were consistent.\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1515941783",
+      "id": "20240406-193933_1102806409",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:47.799",
+      "dateFinished": "2024-04-08 06:54:47.919",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Defining the Inception net v1\n\nHere we will be creating the Inception net v1 model using Keras Functional API\n\n### Funtions that encapsulate various components of the Inception net v1 model",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:47.999",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eDefining the Inception net v1\u003c/h2\u003e\n\u003cp\u003eHere we will be creating the Inception net v1 model using Keras Functional API\u003c/p\u003e\n\u003ch3\u003eFuntions that encapsulate various components of the Inception net v1 model\u003c/h3\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1099834931",
+      "id": "20240406-193933_785986939",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:48.002",
+      "dateFinished": "2024-04-08 06:54:48.005",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n# Section 6.3\nfrom tensorflow.keras.layers import Input, Conv2D, MaxPool2D, AvgPool2D, Dense, Concatenate, Flatten, Lambda, Dropout\nfrom tensorflow.keras.models import Model\nfrom tensorflow.keras.losses import CategoricalCrossentropy\nimport tensorflow.keras.backend as K\n\n# Code listing 6.3\ndef stem(inp):\n    conv1 \u003d Conv2D(64, (7,7), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(inp)\n    maxpool2 \u003d MaxPool2D((3,3), strides\u003d(2,2), padding\u003d\u0027same\u0027)(conv1)\n    lrn3 \u003d Lambda(lambda x: tf.nn.local_response_normalization(x))(maxpool2)\n\n    conv4 \u003d Conv2D(64, (1,1), strides\u003d(1,1), padding\u003d\u0027same\u0027)(lrn3)\n    conv5 \u003d Conv2D(192, (3,3), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(conv4)\n    lrn6 \u003d Lambda(lambda x: tf.nn.local_response_normalization(x))(conv5)\n\n    maxpool7 \u003d MaxPool2D((3,3), strides\u003d(1,1), padding\u003d\u0027same\u0027)(lrn6)\n\n    return maxpool7\n\n# Code listing 6.4\ndef inception(inp, n_filters):\n\n    # 1x1 layer\n    # init argument defaults to glorot_uniform\n    out1 \u003d Conv2D(n_filters[0][0], (1,1), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(inp)\n\n    # 1x1 followed by 3x3\n    out2_1 \u003d Conv2D(n_filters[1][0], (1,1), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(inp)\n    out2_2 \u003d Conv2D(n_filters[1][1], (3,3), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(out2_1)\n\n    # 1x1 followed by 5x5\n    out3_1 \u003d Conv2D(n_filters[2][0], (1,1), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(inp)\n    out3_2 \u003d Conv2D(n_filters[2][1], (5,5), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(out3_1)\n\n    # 3x3 (pool) followed by 1x1\n    out4_1 \u003d MaxPool2D((3,3), strides\u003d(1,1), padding\u003d\u0027same\u0027)(inp)\n    out4_2 \u003d Conv2D(n_filters[3][0], (1,1), strides\u003d(1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(out4_1)\n\n    out \u003d Concatenate(axis\u003d-1)([out1, out2_2, out3_2, out4_2])\n    return out\n\n# Code listing 6.5\ndef aux_out(inp,name\u003dNone):    \n    avgpool1 \u003d AvgPool2D((5,5), strides\u003d(3,3), padding\u003d\u0027valid\u0027)(inp)\n    conv1 \u003d Conv2D(128, (1,1), activation\u003d\u0027relu\u0027, padding\u003d\u0027same\u0027)(avgpool1)\n    flat \u003d Flatten()(conv1)\n    dense1 \u003d Dense(1024, activation\u003d\u0027relu\u0027)(flat)    \n    aux_out \u003d Dense(200, activation\u003d\u0027softmax\u0027, name\u003dname)(dense1)\n    return aux_out\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:48.102",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1680344667",
+      "id": "20240406-193933_1518232205",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:48.106",
+      "dateFinished": "2024-04-08 06:54:48.110",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n### Defining the final model",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:48.206",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch3\u003eDefining the final model\u003c/h3\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1151581078",
+      "id": "20240406-193933_87311592",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:48.209",
+      "dateFinished": "2024-04-08 06:54:48.211",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n# Section 6.3\n# Code listing 6.6\ndef inception_v1():\n    \n    K.clear_session()\n    \n    inp \u003d Input(shape\u003d(56,56,3))\n    stem_out \u003d stem(inp)\n    inc_3a \u003d inception(stem_out, [(64,),(96,128),(16,32),(32,)])\n    inc_3b \u003d inception(inc_3a, [(128,),(128,192),(32,96),(64,)])\n\n    maxpool \u003d MaxPool2D((3,3), strides\u003d(2,2), padding\u003d\u0027same\u0027)(inc_3b)\n\n    inc_4a \u003d inception(maxpool, [(192,),(96,208),(16,48),(64,)])\n    inc_4b \u003d inception(inc_4a, [(160,),(112,224),(24,64),(64,)])\n\n    aux_out1 \u003d aux_out(inc_4a, name\u003d\u0027aux1\u0027)\n\n    inc_4c \u003d inception(inc_4b, [(128,),(128,256),(24,64),(64,)])\n    inc_4d \u003d inception(inc_4c, [(112,),(144,288),(32,64),(64,)])\n    inc_4e \u003d inception(inc_4d, [(256,),(160,320),(32,128),(128,)])\n    \n    maxpool \u003d MaxPool2D((3,3), strides\u003d(2,2), padding\u003d\u0027same\u0027)(inc_4e)\n    \n    aux_out2 \u003d aux_out(inc_4d, name\u003d\u0027aux2\u0027)\n\n    inc_5a \u003d inception(maxpool, [(256,),(160,320),(32,128),(128,)])\n    inc_5b \u003d inception(inc_5a, [(384,),(192,384),(48,128),(128,)])\n    avgpool1 \u003d AvgPool2D((7,7), strides\u003d(1,1), padding\u003d\u0027valid\u0027)(inc_5b)\n\n    flat_out \u003d Flatten()(avgpool1)\n    out_main \u003d Dense(200, activation\u003d\u0027softmax\u0027, name\u003d\u0027final\u0027)(flat_out)\n\n    model \u003d Model(inputs\u003dinp, outputs\u003d[out_main, aux_out1, aux_out2])\n    model.compile(loss\u003d\u0027categorical_crossentropy\u0027, \n                       optimizer\u003d\u0027adam\u0027, metrics\u003d[\u0027accuracy\u0027])\n    return model\n\nmodel \u003d inception_v1()\nmodel.summary()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:48.309",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "Model: \"model\"\n__________________________________________________________________________________________________\n Layer (type)                   Output Shape         Param #     Connected to                     \n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\n input_1 (InputLayer)           [(None, 56, 56, 3)]  0           []                               \n                                                                                                  \n conv2d (Conv2D)                (None, 56, 56, 64)   9472        [\u0027input_1[0][0]\u0027]                \n                                                                                                  \n max_pooling2d (MaxPooling2D)   (None, 28, 28, 64)   0           [\u0027conv2d[0][0]\u0027]                 \n                                                                                                  \n lambda (Lambda)                (None, 28, 28, 64)   0           [\u0027max_pooling2d[0][0]\u0027]          \n                                                                                                  \n conv2d_1 (Conv2D)              (None, 28, 28, 64)   4160        [\u0027lambda[0][0]\u0027]                 \n                                                                                                  \n conv2d_2 (Conv2D)              (None, 28, 28, 192)  110784      [\u0027conv2d_1[0][0]\u0027]               \n                                                                                                  \n lambda_1 (Lambda)              (None, 28, 28, 192)  0           [\u0027conv2d_2[0][0]\u0027]               \n                                                                                                  \n max_pooling2d_1 (MaxPooling2D)  (None, 28, 28, 192)  0          [\u0027lambda_1[0][0]\u0027]               \n                                                                                                  \n conv2d_4 (Conv2D)              (None, 28, 28, 96)   18528       [\u0027max_pooling2d_1[0][0]\u0027]        \n                                                                                                  \n conv2d_6 (Conv2D)              (None, 28, 28, 16)   3088        [\u0027max_pooling2d_1[0][0]\u0027]        \n                                                                                                  \n max_pooling2d_2 (MaxPooling2D)  (None, 28, 28, 192)  0          [\u0027max_pooling2d_1[0][0]\u0027]        \n                                                                                                  \n conv2d_3 (Conv2D)              (None, 28, 28, 64)   12352       [\u0027max_pooling2d_1[0][0]\u0027]        \n                                                                                                  \n conv2d_5 (Conv2D)              (None, 28, 28, 128)  110720      [\u0027conv2d_4[0][0]\u0027]               \n                                                                                                  \n conv2d_7 (Conv2D)              (None, 28, 28, 32)   12832       [\u0027conv2d_6[0][0]\u0027]               \n                                                                                                  \n conv2d_8 (Conv2D)              (None, 28, 28, 32)   6176        [\u0027max_pooling2d_2[0][0]\u0027]        \n                                                                                                  \n concatenate (Concatenate)      (None, 28, 28, 256)  0           [\u0027conv2d_3[0][0]\u0027,               \n                                                                  \u0027conv2d_5[0][0]\u0027,               \n                                                                  \u0027conv2d_7[0][0]\u0027,               \n                                                                  \u0027conv2d_8[0][0]\u0027]               \n                                                                                                  \n conv2d_10 (Conv2D)             (None, 28, 28, 128)  32896       [\u0027concatenate[0][0]\u0027]            \n                                                                                                  \n conv2d_12 (Conv2D)             (None, 28, 28, 32)   8224        [\u0027concatenate[0][0]\u0027]            \n                                                                                                  \n max_pooling2d_3 (MaxPooling2D)  (None, 28, 28, 256)  0          [\u0027concatenate[0][0]\u0027]            \n                                                                                                  \n conv2d_9 (Conv2D)              (None, 28, 28, 128)  32896       [\u0027concatenate[0][0]\u0027]            \n                                                                                                  \n conv2d_11 (Conv2D)             (None, 28, 28, 192)  221376      [\u0027conv2d_10[0][0]\u0027]              \n                                                                                                  \n conv2d_13 (Conv2D)             (None, 28, 28, 96)   76896       [\u0027conv2d_12[0][0]\u0027]              \n                                                                                                  \n conv2d_14 (Conv2D)             (None, 28, 28, 64)   16448       [\u0027max_pooling2d_3[0][0]\u0027]        \n                                                                                                  \n concatenate_1 (Concatenate)    (None, 28, 28, 480)  0           [\u0027conv2d_9[0][0]\u0027,               \n                                                                  \u0027conv2d_11[0][0]\u0027,              \n                                                                  \u0027conv2d_13[0][0]\u0027,              \n                                                                  \u0027conv2d_14[0][0]\u0027]              \n                                                                                                  \n max_pooling2d_4 (MaxPooling2D)  (None, 14, 14, 480)  0          [\u0027concatenate_1[0][0]\u0027]          \n                                                                                                  \n conv2d_16 (Conv2D)             (None, 14, 14, 96)   46176       [\u0027max_pooling2d_4[0][0]\u0027]        \n                                                                                                  \n conv2d_18 (Conv2D)             (None, 14, 14, 16)   7696        [\u0027max_pooling2d_4[0][0]\u0027]        \n                                                                                                  \n max_pooling2d_5 (MaxPooling2D)  (None, 14, 14, 480)  0          [\u0027max_pooling2d_4[0][0]\u0027]        \n                                                                                                  \n conv2d_15 (Conv2D)             (None, 14, 14, 192)  92352       [\u0027max_pooling2d_4[0][0]\u0027]        \n                                                                                                  \n conv2d_17 (Conv2D)             (None, 14, 14, 208)  179920      [\u0027conv2d_16[0][0]\u0027]              \n                                                                                                  \n conv2d_19 (Conv2D)             (None, 14, 14, 48)   19248       [\u0027conv2d_18[0][0]\u0027]              \n                                                                                                  \n conv2d_20 (Conv2D)             (None, 14, 14, 64)   30784       [\u0027max_pooling2d_5[0][0]\u0027]        \n                                                                                                  \n concatenate_2 (Concatenate)    (None, 14, 14, 512)  0           [\u0027conv2d_15[0][0]\u0027,              \n                                                                  \u0027conv2d_17[0][0]\u0027,              \n                                                                  \u0027conv2d_19[0][0]\u0027,              \n                                                                  \u0027conv2d_20[0][0]\u0027]              \n                                                                                                  \n conv2d_22 (Conv2D)             (None, 14, 14, 112)  57456       [\u0027concatenate_2[0][0]\u0027]          \n                                                                                                  \n conv2d_24 (Conv2D)             (None, 14, 14, 24)   12312       [\u0027concatenate_2[0][0]\u0027]          \n                                                                                                  \n max_pooling2d_6 (MaxPooling2D)  (None, 14, 14, 512)  0          [\u0027concatenate_2[0][0]\u0027]          \n                                                                                                  \n conv2d_21 (Conv2D)             (None, 14, 14, 160)  82080       [\u0027concatenate_2[0][0]\u0027]          \n                                                                                                  \n conv2d_23 (Conv2D)             (None, 14, 14, 224)  226016      [\u0027conv2d_22[0][0]\u0027]              \n                                                                                                  \n conv2d_25 (Conv2D)             (None, 14, 14, 64)   38464       [\u0027conv2d_24[0][0]\u0027]              \n                                                                                                  \n conv2d_26 (Conv2D)             (None, 14, 14, 64)   32832       [\u0027max_pooling2d_6[0][0]\u0027]        \n                                                                                                  \n concatenate_3 (Concatenate)    (None, 14, 14, 512)  0           [\u0027conv2d_21[0][0]\u0027,              \n                                                                  \u0027conv2d_23[0][0]\u0027,              \n                                                                  \u0027conv2d_25[0][0]\u0027,              \n                                                                  \u0027conv2d_26[0][0]\u0027]              \n                                                                                                  \n conv2d_29 (Conv2D)             (None, 14, 14, 128)  65664       [\u0027concatenate_3[0][0]\u0027]          \n                                                                                                  \n conv2d_31 (Conv2D)             (None, 14, 14, 24)   12312       [\u0027concatenate_3[0][0]\u0027]          \n                                                                                                  \n max_pooling2d_7 (MaxPooling2D)  (None, 14, 14, 512)  0          [\u0027concatenate_3[0][0]\u0027]          \n                                                                                                  \n conv2d_28 (Conv2D)             (None, 14, 14, 128)  65664       [\u0027concatenate_3[0][0]\u0027]          \n                                                                                                  \n conv2d_30 (Conv2D)             (None, 14, 14, 256)  295168      [\u0027conv2d_29[0][0]\u0027]              \n                                                                                                  \n conv2d_32 (Conv2D)             (None, 14, 14, 64)   38464       [\u0027conv2d_31[0][0]\u0027]              \n                                                                                                  \n conv2d_33 (Conv2D)             (None, 14, 14, 64)   32832       [\u0027max_pooling2d_7[0][0]\u0027]        \n                                                                                                  \n concatenate_4 (Concatenate)    (None, 14, 14, 512)  0           [\u0027conv2d_28[0][0]\u0027,              \n                                                                  \u0027conv2d_30[0][0]\u0027,              \n                                                                  \u0027conv2d_32[0][0]\u0027,              \n                                                                  \u0027conv2d_33[0][0]\u0027]              \n                                                                                                  \n conv2d_35 (Conv2D)             (None, 14, 14, 144)  73872       [\u0027concatenate_4[0][0]\u0027]          \n                                                                                                  \n conv2d_37 (Conv2D)             (None, 14, 14, 32)   16416       [\u0027concatenate_4[0][0]\u0027]          \n                                                                                                  \n max_pooling2d_8 (MaxPooling2D)  (None, 14, 14, 512)  0          [\u0027concatenate_4[0][0]\u0027]          \n                                                                                                  \n conv2d_34 (Conv2D)             (None, 14, 14, 112)  57456       [\u0027concatenate_4[0][0]\u0027]          \n                                                                                                  \n conv2d_36 (Conv2D)             (None, 14, 14, 288)  373536      [\u0027conv2d_35[0][0]\u0027]              \n                                                                                                  \n conv2d_38 (Conv2D)             (None, 14, 14, 64)   51264       [\u0027conv2d_37[0][0]\u0027]              \n                                                                                                  \n conv2d_39 (Conv2D)             (None, 14, 14, 64)   32832       [\u0027max_pooling2d_8[0][0]\u0027]        \n                                                                                                  \n concatenate_5 (Concatenate)    (None, 14, 14, 528)  0           [\u0027conv2d_34[0][0]\u0027,              \n                                                                  \u0027conv2d_36[0][0]\u0027,              \n                                                                  \u0027conv2d_38[0][0]\u0027,              \n                                                                  \u0027conv2d_39[0][0]\u0027]              \n                                                                                                  \n conv2d_41 (Conv2D)             (None, 14, 14, 160)  84640       [\u0027concatenate_5[0][0]\u0027]          \n                                                                                                  \n conv2d_43 (Conv2D)             (None, 14, 14, 32)   16928       [\u0027concatenate_5[0][0]\u0027]          \n                                                                                                  \n max_pooling2d_9 (MaxPooling2D)  (None, 14, 14, 528)  0          [\u0027concatenate_5[0][0]\u0027]          \n                                                                                                  \n conv2d_40 (Conv2D)             (None, 14, 14, 256)  135424      [\u0027concatenate_5[0][0]\u0027]          \n                                                                                                  \n conv2d_42 (Conv2D)             (None, 14, 14, 320)  461120      [\u0027conv2d_41[0][0]\u0027]              \n                                                                                                  \n conv2d_44 (Conv2D)             (None, 14, 14, 128)  102528      [\u0027conv2d_43[0][0]\u0027]              \n                                                                                                  \n conv2d_45 (Conv2D)             (None, 14, 14, 128)  67712       [\u0027max_pooling2d_9[0][0]\u0027]        \n                                                                                                  \n concatenate_6 (Concatenate)    (None, 14, 14, 832)  0           [\u0027conv2d_40[0][0]\u0027,              \n                                                                  \u0027conv2d_42[0][0]\u0027,              \n                                                                  \u0027conv2d_44[0][0]\u0027,              \n                                                                  \u0027conv2d_45[0][0]\u0027]              \n                                                                                                  \n max_pooling2d_10 (MaxPooling2D  (None, 7, 7, 832)   0           [\u0027concatenate_6[0][0]\u0027]          \n )                                                                                                \n                                                                                                  \n conv2d_48 (Conv2D)             (None, 7, 7, 160)    133280      [\u0027max_pooling2d_10[0][0]\u0027]       \n                                                                                                  \n conv2d_50 (Conv2D)             (None, 7, 7, 32)     26656       [\u0027max_pooling2d_10[0][0]\u0027]       \n                                                                                                  \n max_pooling2d_11 (MaxPooling2D  (None, 7, 7, 832)   0           [\u0027max_pooling2d_10[0][0]\u0027]       \n )                                                                                                \n                                                                                                  \n conv2d_47 (Conv2D)             (None, 7, 7, 256)    213248      [\u0027max_pooling2d_10[0][0]\u0027]       \n                                                                                                  \n conv2d_49 (Conv2D)             (None, 7, 7, 320)    461120      [\u0027conv2d_48[0][0]\u0027]              \n                                                                                                  \n conv2d_51 (Conv2D)             (None, 7, 7, 128)    102528      [\u0027conv2d_50[0][0]\u0027]              \n                                                                                                  \n conv2d_52 (Conv2D)             (None, 7, 7, 128)    106624      [\u0027max_pooling2d_11[0][0]\u0027]       \n                                                                                                  \n concatenate_7 (Concatenate)    (None, 7, 7, 832)    0           [\u0027conv2d_47[0][0]\u0027,              \n                                                                  \u0027conv2d_49[0][0]\u0027,              \n                                                                  \u0027conv2d_51[0][0]\u0027,              \n                                                                  \u0027conv2d_52[0][0]\u0027]              \n                                                                                                  \n conv2d_54 (Conv2D)             (None, 7, 7, 192)    159936      [\u0027concatenate_7[0][0]\u0027]          \n                                                                                                  \n conv2d_56 (Conv2D)             (None, 7, 7, 48)     39984       [\u0027concatenate_7[0][0]\u0027]          \n                                                                                                  \n max_pooling2d_12 (MaxPooling2D  (None, 7, 7, 832)   0           [\u0027concatenate_7[0][0]\u0027]          \n )                                                                                                \n                                                                                                  \n conv2d_53 (Conv2D)             (None, 7, 7, 384)    319872      [\u0027concatenate_7[0][0]\u0027]          \n                                                                                                  \n conv2d_55 (Conv2D)             (None, 7, 7, 384)    663936      [\u0027conv2d_54[0][0]\u0027]              \n                                                                                                  \n conv2d_57 (Conv2D)             (None, 7, 7, 128)    153728      [\u0027conv2d_56[0][0]\u0027]              \n                                                                                                  \n conv2d_58 (Conv2D)             (None, 7, 7, 128)    106624      [\u0027max_pooling2d_12[0][0]\u0027]       \n                                                                                                  \n average_pooling2d (AveragePool  (None, 4, 4, 512)   0           [\u0027concatenate_2[0][0]\u0027]          \n ing2D)                                                                                           \n                                                                                                  \n average_pooling2d_1 (AveragePo  (None, 4, 4, 528)   0           [\u0027concatenate_5[0][0]\u0027]          \n oling2D)                                                                                         \n                                                                                                  \n concatenate_8 (Concatenate)    (None, 7, 7, 1024)   0           [\u0027conv2d_53[0][0]\u0027,              \n                                                                  \u0027conv2d_55[0][0]\u0027,              \n                                                                  \u0027conv2d_57[0][0]\u0027,              \n                                                                  \u0027conv2d_58[0][0]\u0027]              \n                                                                                                  \n conv2d_27 (Conv2D)             (None, 4, 4, 128)    65664       [\u0027average_pooling2d[0][0]\u0027]      \n                                                                                                  \n conv2d_46 (Conv2D)             (None, 4, 4, 128)    67712       [\u0027average_pooling2d_1[0][0]\u0027]    \n                                                                                                  \n average_pooling2d_2 (AveragePo  (None, 1, 1, 1024)  0           [\u0027concatenate_8[0][0]\u0027]          \n oling2D)                                                                                         \n                                                                                                  \n flatten (Flatten)              (None, 2048)         0           [\u0027conv2d_27[0][0]\u0027]              \n                                                                                                  \n flatten_1 (Flatten)            (None, 2048)         0           [\u0027conv2d_46[0][0]\u0027]              \n                                                                                                  \n flatten_2 (Flatten)            (None, 1024)         0           [\u0027average_pooling2d_2[0][0]\u0027]    \n                                                                                                  \n dense (Dense)                  (None, 1024)         2098176     [\u0027flatten[0][0]\u0027]                \n                                                                                                  \n dense_1 (Dense)                (None, 1024)         2098176     [\u0027flatten_1[0][0]\u0027]              \n                                                                                                  \n final (Dense)                  (None, 200)          205000      [\u0027flatten_2[0][0]\u0027]              \n                                                                                                  \n aux1 (Dense)                   (None, 200)          205000      [\u0027dense[0][0]\u0027]                  \n                                                                                                  \n aux2 (Dense)                   (None, 200)          205000      [\u0027dense_1[0][0]\u0027]                \n                                                                                                  \n\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\nTotal params: 10,918,280\nTrainable params: 10,918,280\nNon-trainable params: 0\n__________________________________________________________________________________________________\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1667828048",
+      "id": "20240406-193933_528033522",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:48.314",
+      "dateFinished": "2024-04-08 06:54:48.799",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%md\n## Training the model",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:48.814",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        },
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {}
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eTraining the model\u003c/h2\u003e\n\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_888437821",
+      "id": "20240406-193933_2020391563",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:48.817",
+      "dateFinished": "2024-04-08 06:54:48.820",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n# Section 6.4\n\ndef get_steps_per_epoch(n_data, batch_size):\n    \"\"\" Given the data size and batch size, gives the number of steps to travers the full dataset \"\"\"\n    if n_data%batch_size\u003d\u003d0:\n        return int(n_data/batch_size)\n    else:\n        return int(n_data*1.0/batch_size)+1",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:48.918",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373484_1422677841",
+      "id": "20240406-193933_1362089217",
+      "dateCreated": "2024-04-06 19:39:33.484",
+      "dateStarted": "2024-04-08 06:54:48.922",
+      "dateFinished": "2024-04-08 06:54:48.924",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%python\n# Section 6.4\n# Code listing 6.7\n\nfrom tensorflow.keras.callbacks import CSVLogger\nimport time\nimport os\n\n# Create a directory called eval which stores model performance\nif not os.path.exists(\u0027eval\u0027):\n    os.mkdir(\u0027eval\u0027)\n    \n# This will automatically log model performan to this file\ncsv_logger \u003d CSVLogger(os.path.join(\u0027eval\u0027,\u00271_eval_base.log\u0027))\n    \nt1 \u003d time.time() # Starting time\n\n# Train the model, not how we are specifying steps_per_epoch and validation_steps\n# to prevent the model from training forever\n# We are also using the data generators (not actual data loaded to memory) to train the model\nhistory \u003d model.fit(\n    train_gen_aux, validation_data\u003dvalid_gen_aux, \n    steps_per_epoch\u003dget_steps_per_epoch(0.9*500*200,batch_size), \n    validation_steps\u003dget_steps_per_epoch(0.1*500*200,batch_size),\n    epochs\u003d50, callbacks\u003d[csv_logger]\n)\nt2 \u003d time.time() # Ending time\n\n# Print time it took\nprint(\"It took {} seconds to complete the training\".format(t2-t1))",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 06:54:49.022",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python",
+        "colWidth": 12.0,
+        "editorHide": false,
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_1040692304",
+      "id": "20240406-193933_1989920968",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "dateStarted": "2024-04-08 06:54:49.025",
+      "dateFinished": "2024-04-07 11:18:36.993",
+      "status": "ABORT"
+    },
+    {
+      "text": "%md\n## Bonus: Metrics of the model\n\nThis is a multi output model. So it pays off to check what are the metrics that the model uses. You can get metric names by calling `model.metrics_names` as follows.",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eBonus: Metrics of the model\u003c/h2\u003e\n\u003cp\u003eThis is a multi output model. So it pays off to check what are the metrics that the model uses. You can get metric names by calling \u003ccode\u003emodel.metrics_names\u003c/code\u003e as follows.\u003c/p\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_773145192",
+      "id": "20240406-193933_537079391",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    },
+    {
+      "text": "%python\nprint(model.metrics_names)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/python",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027loss\u0027, \u0027final_loss\u0027, \u0027aux1_loss\u0027, \u0027aux2_loss\u0027, \u0027final_accuracy\u0027, \u0027aux1_accuracy\u0027, \u0027aux2_accuracy\u0027]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_501583867",
+      "id": "20240406-193933_1034317878",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    },
+    {
+      "text": "%md\n## Saving the trained model",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eSaving the trained model\u003c/h2\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_1410420161",
+      "id": "20240406-193933_302919006",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    },
+    {
+      "text": "%python\n# Save the model to models directory\nif not os.path.exists(\u0027models\u0027):\n    os.mkdir(\"models\")\nmodel.save(os.path.join(\u0027models\u0027, \u0027inception_v1_base.h5\u0027))",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/python",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_2128320990",
+      "id": "20240406-193933_989559391",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    },
+    {
+      "text": "%md\n## Get test accuracy of the trained model",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true
+        }
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003cdiv class\u003d\"markdown-body\"\u003e\n\u003ch2\u003eGet test accuracy of the trained model\u003c/h2\u003e\n\u003c/div\u003e"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_152114214",
+      "id": "20240406-193933_62118537",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    },
+    {
+      "text": "%python\n# Section 6.4\n\n# Load the model from disk\nmodel \u003d load_model(os.path.join(\u0027models\u0027,\u0027inception_v1_base.h5\u0027))\n\n# Evaluate the model\ntest_res \u003d model.evaluate(test_gen_aux, steps\u003dget_steps_per_epoch(500*50, batch_size))\n\n# Print the results as a dictionary {\u003cmetric name\u003e: \u003cvalue\u003e}\ntest_res_dict \u003d dict(zip(model.metrics_names, test_res))\nprint(test_res_dict)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/python",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "196/196 [\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d\u003d] - 17s 85ms/step - loss: 27.5954 - final_loss: 8.3132 - aux1_loss: 10.1646 - aux2_loss: 9.1176 - final_accuracy: 0.2670 - aux1_accuracy: 0.2454 - aux2_accuracy: 0.2419\n{\u0027loss\u0027: 27.595443725585938, \u0027final_loss\u0027: 8.31319522857666, \u0027aux1_loss\u0027: 10.164627075195312, \u0027aux2_loss\u0027: 9.11762809753418, \u0027final_accuracy\u0027: 0.2669723331928253, \u0027aux1_accuracy\u0027: 0.24537484347820282, \u0027aux2_accuracy\u0027: 0.2418757975101471}\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_1437925264",
+      "id": "20240406-193933_228211977",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    },
+    {
+      "text": "%python\n",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-06 19:39:33.485",
+      "progress": 0,
+      "config": {
+        "editorMode": "ace/mode/python",
+        "editorHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": []
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712432373485_2124598148",
+      "id": "20240406-193933_1855817017",
+      "dateCreated": "2024-04-06 19:39:33.485",
+      "status": "READY"
+    }
+  ],
+  "name": "Tensorflow Training (Heavy)",
+  "id": "2JWK5N3QW",
+  "defaultInterpreterGroup": "spark",
+  "version": "0.10.1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {
+    "isRunning": true
+  }
+}
