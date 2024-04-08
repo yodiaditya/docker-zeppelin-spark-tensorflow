@@ -4,9 +4,9 @@ channels:
   - defaults
 dependencies:
   - python >=3.8,<3.9
-  - scipy
-  - numpy
-  - ipython
-  - ipykernel
-  - seaborn
-  - pip
+  # - scipy
+  # - numpy
+  # - ipython
+  # - ipykernel
+  # - seaborn
+  # - pip
