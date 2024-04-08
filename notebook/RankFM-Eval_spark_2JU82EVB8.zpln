@@ -1,9 +1,9 @@
 {
   "paragraphs": [
     {
-      "text": "%pyspark\n!pip install numba rankfm matplotlib seaborn",
+      "text": "%pyspark\n!pip install rankfm",
       "user": "anonymous",
-      "dateUpdated": "2024-04-08 10:33:23.027",
+      "dateUpdated": "2024-04-08 20:06:38.949",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -23,11 +23,11 @@
         "forms": {}
       },
       "results": {
-        "code": "SUCCESS",
+        "code": "ERROR",
         "msg": [
           {
             "type": "TEXT",
-            "data": "Defaulting to user installation because normal site-packages is not writeable\r\nRequirement already satisfied: numba in ./.local/lib/python3.8/site-packages (0.58.1)\r\nRequirement already satisfied: rankfm in ./.local/lib/python3.8/site-packages (0.2.5)\r\nRequirement already satisfied: matplotlib in ./.local/lib/python3.8/site-packages (3.7.5)\r\nRequirement already satisfied: seaborn in ./.local/lib/python3.8/site-packages (0.13.2)\r\nRequirement already satisfied: llvmlite\u003c0.42,\u003e\u003d0.41.0dev0 in ./.local/lib/python3.8/site-packages (from numba) (0.41.1)\r\nRequirement already satisfied: numpy\u003c1.27,\u003e\u003d1.22 in ./.local/lib/python3.8/site-packages (from numba) (1.22.4)\r\nRequirement already satisfied: importlib-metadata in ./.local/lib/python3.8/site-packages (from numba) (7.1.0)\r\nRequirement already satisfied: pandas\u003e\u003d0.24 in ./.local/lib/python3.8/site-packages (from rankfm) (1.5.3)\r\nRequirement already satisfied: contourpy\u003e\u003d1.0.1 in ./.local/lib/python3.8/site-packages (from matplotlib) (1.1.1)\r\nRequirement already satisfied: cycler\u003e\u003d0.10 in ./.local/lib/python3.8/site-packages (from matplotlib) (0.12.1)\r\nRequirement already satisfied: fonttools\u003e\u003d4.22.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (4.51.0)\r\nRequirement already satisfied: kiwisolver\u003e\u003d1.0.1 in ./.local/lib/python3.8/site-packages (from matplotlib) (1.4.5)\r\nRequirement already satisfied: packaging\u003e\u003d20.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (20.9)\r\nRequirement already satisfied: pillow\u003e\u003d6.2.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (9.3.0)\r\nRequirement already satisfied: pyparsing\u003e\u003d2.3.1 in ./.local/lib/python3.8/site-packages (from matplotlib) (3.1.2)\r\nRequirement already satisfied: python-dateutil\u003e\u003d2.7 in ./.local/lib/python3.8/site-packages (from matplotlib) (2.9.0.post0)\r\nRequirement already satisfied: importlib-resources\u003e\u003d3.2.0 in ./.local/lib/python3.8/site-packages (from matplotlib) (6.1.1)\r\nRequirement already satisfied: zipp\u003e\u003d3.1.0 in ./.local/lib/python3.8/site-packages (from importlib-resources\u003e\u003d3.2.0-\u003ematplotlib) (3.18.1)\r\nRequirement already satisfied: pytz\u003e\u003d2020.1 in ./.local/lib/python3.8/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2024.1)\r\nRequirement already satisfied: six\u003e\u003d1.5 in ./.local/lib/python3.8/site-packages (from python-dateutil\u003e\u003d2.7-\u003ematplotlib) (1.16.0)\r\n"
+            "data": "Traceback (most recent call last):\n  File \"/tmp/python8166131365034144374/zeppelin_python.py\", line 152, in \u003cmodule\u003e\n    code \u003d compile(\u0027\\n\u0027.join(stmts), \u0027\u003cstdin\u003e\u0027, \u0027exec\u0027, ast.PyCF_ONLY_AST, 1)\n  File \"\u003cstdin\u003e\", line 2\n    !pip install rankfm\n    ^\nSyntaxError: invalid syntax\n"
           }
         ]
       },
@@ -37,14 +37,14 @@
       "jobName": "paragraph_1712562801660_581737404",
       "id": "paragraph_1712562801660_581737404",
       "dateCreated": "2024-04-08 07:53:21.660",
-      "dateStarted": "2024-04-08 10:33:23.028",
-      "dateFinished": "2024-04-08 10:33:24.490",
-      "status": "FINISHED"
+      "dateStarted": "2024-04-08 20:06:38.952",
+      "dateFinished": "2024-04-08 20:06:38.959",
+      "status": "ERROR"
     },
     {
-      "text": "%pyspark\nimport numpy as np\nimport numba as nb\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\nimport seaborn as sns\n\nfrom rankfm.rankfm import RankFM\nfrom rankfm.evaluation import hit_rate, reciprocal_rank, discounted_cumulative_gain, precision, recall, diversity\n\nimport warnings\n# warnings.filterwarnings(\"ignore\", category\u003dnb.NumbaPerformanceWarning)\n",
+      "text": "%pyspark\nimport pandas as pd\n\nfrom rankfm.rankfm import RankFM\nfrom rankfm.evaluation import hit_rate, reciprocal_rank, discounted_cumulative_gain, precision, recall, diversity\n\nimport warnings\n# warnings.filterwarnings(\"ignore\", category\u003dnb.NumbaPerformanceWarning)\n",
       "user": "anonymous",
-      "dateUpdated": "2024-04-08 10:33:27.765",
+      "dateUpdated": "2024-04-08 20:07:19.656",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -73,15 +73,15 @@
       "jobName": "paragraph_1712562729139_877933842",
       "id": "paragraph_1712562729139_877933842",
       "dateCreated": "2024-04-08 07:52:09.139",
-      "dateStarted": "2024-04-08 10:33:27.767",
-      "dateFinished": "2024-04-08 10:33:27.972",
+      "dateStarted": "2024-04-08 20:07:19.658",
+      "dateFinished": "2024-04-08 20:07:27.627",
       "status": "FINISHED"
     },
     {
       "text": "%pyspark\nratings \u003d spark.read.option(\"header\", True).option(\"delimiter\", \",\").csv(\"/data/ml-25m/ratings.csv\")\nratings.show(5)",
       "user": "anonymous",
-      "dateUpdated": "2024-04-08 10:59:18.478",
-      "progress": 100,
+      "dateUpdated": "2024-04-08 20:07:29.417",
+      "progress": 0,
       "config": {
         "editorSetting": {
           "language": "python",
@@ -117,10 +117,10 @@
           "group": "spark",
           "values": [
             {
-              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d5"
+              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d0"
             },
             {
-              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d6"
+              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d1"
             }
           ],
           "interpreterSettingId": "spark"
@@ -130,9 +130,95 @@
       "jobName": "paragraph_1712562797380_369143858",
       "id": "paragraph_1712562797380_369143858",
       "dateCreated": "2024-04-08 07:53:17.380",
-      "dateStarted": "2024-04-08 10:59:18.479",
-      "dateFinished": "2024-04-08 10:59:18.786",
+      "dateStarted": "2024-04-08 20:07:29.420",
+      "dateFinished": "2024-04-08 20:07:31.464",
       "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nimport sys\nprint(sys.path)",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 20:07:40.555",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "[\u0027/tmp/python5488515980996857410\u0027, \u0027/tmp/spark-52bc4738-2b88-4d01-8f6f-6f18218b5edb/userFiles-8867edc6-365f-46c0-93b9-e0fe0a146993\u0027, \u0027/opt/bitnami/spark/python/lib/py4j-0.10.9-src.zip\u0027, \u0027/opt/bitnami/spark/python\u0027, \u0027/opt/zeppelin\u0027, \u0027/tmp/python5488515980996857410\u0027, \u0027/opt/conda/envs/python_3_with_R/lib/python38.zip\u0027, \u0027/opt/conda/envs/python_3_with_R/lib/python3.8\u0027, \u0027/opt/conda/envs/python_3_with_R/lib/python3.8/lib-dynload\u0027, \u0027/opt/zeppelin/.local/lib/python3.8/site-packages\u0027, \u0027/opt/conda/envs/python_3_with_R/lib/python3.8/site-packages\u0027, \u0027/opt/zeppelin/interpreter/spark/spark-interpreter-0.10.1.jar\u0027]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712606852820_128232198",
+      "id": "paragraph_1712606852820_128232198",
+      "dateCreated": "2024-04-08 20:07:32.820",
+      "dateStarted": "2024-04-08 20:07:40.557",
+      "dateFinished": "2024-04-08 20:07:40.564",
+      "status": "FINISHED"
+    },
+    {
+      "text": "%pyspark\nratings_pd \u003d ratings.toPandas()",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-08 19:29:41.063",
+      "progress": 100,
+      "config": {
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/python",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "SPARK JOB",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            {
+              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d2"
+            }
+          ],
+          "interpreterSettingId": "spark"
+        }
+      },
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712598904909_1788338325",
+      "id": "paragraph_1712598904909_1788338325",
+      "dateCreated": "2024-04-08 17:55:04.909",
+      "dateStarted": "2024-04-08 19:29:41.065",
+      "dateFinished": "2024-04-08 19:29:27.459",
+      "status": "ABORT"
     },
     {
       "text": "%pyspark\nuser_features \u003d spark.read.option(\"header\", True).option(\"delimiter\", \"::\").csv(\"/data/users.dat\")\nuser_features.occupation \u003d user_features.occupation.astype(\u0027str\u0027)\nuser_features.age \u003d user_features.age.astype(\u0027str\u0027)\n",
@@ -886,7 +972,5 @@
   "config": {
     "isZeppelinNotebookCronEnable": false
   },
-  "info": {
-    "isRunning": false
-  }
+  "info": {}
 }
