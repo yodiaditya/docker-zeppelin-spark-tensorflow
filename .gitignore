@@ -1,4 +1,5 @@
 zeppelin/pip-cache/*
 notebook
 *.tgz
-zeppelin/cuda/*
+zeppelin/cuda/
+data/*

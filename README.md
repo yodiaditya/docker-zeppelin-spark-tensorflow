@@ -58,7 +58,7 @@ Several key features in this repository to help you learning :
 
 ### 2.1. Clone this project
 
-`git clone https://github.com/yodiaditya/docker-zeppelin-spark-torch.git`
+`git clone https://github.com/yodiaditya/docker-zeppelin-spark-tensorflow`
 
 ### 2.2. Docker Installation on Ubuntu
 
