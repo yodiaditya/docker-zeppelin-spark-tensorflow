@@ -1,10 +1,4 @@
 scikit-learn
-pandas
-jupyter
-ipywidgets
-numpy
-matplotlib
 seaborn
-xgboost
 numba
 scipy

@@ -113,8 +113,8 @@ RUN pip install --cache-dir pip-cache -r requirements.txt
 ## COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE TFX 
 
 # # Install TFX
-RUN pip install --cache-dir pip-cache -r tfx_requirements.txt
-RUN pip uninstall shapely -y
+# RUN pip install --cache-dir pip-cache -r tfx_requirements.txt
+# RUN pip uninstall shapely -y
 # RUN rm -rf pip-cache
 ################## END TFX Installation #################
 
