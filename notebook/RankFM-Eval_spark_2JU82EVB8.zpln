@@ -1,9 +1,50 @@
 {
   "paragraphs": [
     {
+      "text": "%sh\npip3 install rankfm",
+      "user": "anonymous",
+      "dateUpdated": "2024-04-09 07:13:21.523",
+      "progress": 0,
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "WARNING: The directory \u0027/opt/zeppelin/.cache/pip\u0027 or its parent directory is not owned or is not writable by the curDefaulting to user installation breecnatu ussee rn.o rTmhael  csiatceh-ep ahcaksa gbeese ni sd insoatb lwerdi.t Cheecakb lteh\ne permissions and owner of that directory. If executing pip with sudo, you should use sudo\u0027s -H flag.\nCollecting rankfm\n  Downloading rankfm-0.2.5.tar.gz (145 kB)\n     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 145.5/145.5 kB 339.7 kB/s eta 0:00:00\n  Preparing metadata (setup.py): started\n  Preparing metadata (setup.py): finished with status \u0027done\u0027\nRequirement already satisfied: numpy\u003e\u003d1.15 in /opt/conda/envs/python_3_with_R/lib/python3.8/site-packages (from rankfm) (1.24.4)\nRequirement already satisfied: pandas\u003e\u003d0.24 in /opt/conda/envs/python_3_with_R/lib/python3.8/site-packages (from rankfm) (2.0.3)\nRequirement already satisfied: python-dateutil\u003e\u003d2.8.2 in /opt/conda/envs/python_3_with_R/lib/python3.8/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2.9.0)\nRequirement already satisfied: pytz\u003e\u003d2020.1 in /opt/conda/envs/python_3_with_R/lib/python3.8/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2024.1)\nRequirement already satisfied: tzdata\u003e\u003d2022.1 in /opt/conda/envs/python_3_with_R/lib/python3.8/site-packages (from pandas\u003e\u003d0.24-\u003erankfm) (2024.1)\nRequirement already satisfied: six\u003e\u003d1.5 in /opt/conda/envs/python_3_with_R/lib/python3.8/site-packages (from python-dateutil\u003e\u003d2.8.2-\u003epandas\u003e\u003d0.24-\u003erankfm) (1.16.0)\nBuilding wheels for collected packages: rankfm\n  Building wheel for rankfm (setup.py): started\n  Building wheel for rankfm (setup.py): finished with status \u0027done\u0027\n  Created wheel for rankfm: filename\u003drankfm-0.2.5-cp38-cp38-linux_x86_64.whl size\u003d151308 sha256\u003df0a0f7d5b5fd3c333c25e8a68e4ea853252baf0a6db94928181dcf8d85a00489\n  Stored in directory: /tmp/pip-ephem-wheel-cache-fgfoi86d/wheels/ec/60/5c/48653b64bd7c152da7d8f443ba2235988c2c00b2b23da30740\nSuccessfully built rankfm\nInstalling collected packages: rankfm\nSuccessfully installed rankfm-0.2.5\n"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1712637543556_2084230816",
+      "id": "paragraph_1712637543556_2084230816",
+      "dateCreated": "2024-04-09 04:39:03.556",
+      "dateStarted": "2024-04-09 07:13:21.533",
+      "dateFinished": "2024-04-09 07:13:30.031",
+      "status": "FINISHED"
+    },
+    {
       "text": "%pyspark\nimport pandas as pd\nimport numpy as np \n\nfrom rankfm.rankfm import RankFM\nfrom rankfm.evaluation import hit_rate, reciprocal_rank, discounted_cumulative_gain, precision, recall, diversity\n\nimport warnings\n# warnings.filterwarnings(\"ignore\", category\u003dnb.NumbaPerformanceWarning)\n",
       "user": "anonymous",
-      "dateUpdated": "2024-04-09 04:59:55.710",
+      "dateUpdated": "2024-04-09 07:13:32.121",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -32,46 +73,14 @@
       "jobName": "paragraph_1712562729139_877933842",
       "id": "paragraph_1712562729139_877933842",
       "dateCreated": "2024-04-08 07:52:09.139",
-      "dateStarted": "2024-04-09 04:59:55.712",
-      "dateFinished": "2024-04-09 04:59:55.716",
-      "status": "FINISHED"
-    },
-    {
-      "text": "%sh\npip3 install rankfm",
-      "user": "anonymous",
-      "dateUpdated": "2024-04-09 04:59:45.408",
-      "progress": 0,
-      "config": {
-        "editorSetting": {
-          "language": "sh",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": false
-        },
-        "colWidth": 12.0,
-        "editorMode": "ace/mode/sh",
-        "fontSize": 9.0,
-        "results": {},
-        "enabled": true
-      },
-      "settings": {
-        "params": {},
-        "forms": {}
-      },
-      "apps": [],
-      "runtimeInfos": {},
-      "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1712637543556_2084230816",
-      "id": "paragraph_1712637543556_2084230816",
-      "dateCreated": "2024-04-09 04:39:03.556",
-      "dateStarted": "2024-04-09 04:40:30.095",
-      "dateFinished": "2024-04-09 04:40:52.918",
+      "dateStarted": "2024-04-09 07:13:32.124",
+      "dateFinished": "2024-04-09 07:13:40.649",
       "status": "FINISHED"
     },
     {
       "text": "%pyspark\nratings \u003d spark.read.option(\"header\", True).option(\"delimiter\", \",\").csv(\"/data/ml-25m/ratings.csv\")\nratings \u003d ratings.withColumnRenamed(\"movieId\", \"item_id\").withColumnRenamed(\"userId\", \"user_id\")\nratings.show(5)",
       "user": "anonymous",
-      "dateUpdated": "2024-04-09 04:48:47.347",
+      "dateUpdated": "2024-04-09 07:14:15.018",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -108,10 +117,10 @@
           "group": "spark",
           "values": [
             {
-              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d0"
+              "jobUrl": "http://zeppelin.local:8081/jobs/job?id\u003d2"
             },
             {
-              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d1"
+              "jobUrl": "http://zeppelin.local:8081/jobs/job?id\u003d3"
             }
           ],
           "interpreterSettingId": "spark"
@@ -121,14 +130,14 @@
       "jobName": "paragraph_1712562797380_369143858",
       "id": "paragraph_1712562797380_369143858",
       "dateCreated": "2024-04-08 07:53:17.380",
-      "dateStarted": "2024-04-09 04:48:47.349",
-      "dateFinished": "2024-04-09 04:48:49.481",
+      "dateStarted": "2024-04-09 07:14:15.021",
+      "dateFinished": "2024-04-09 07:14:15.204",
       "status": "FINISHED"
     },
     {
       "text": "%pyspark\ninteractions \u003d ratings.toPandas()\ninteractions.head(4)",
       "user": "anonymous",
-      "dateUpdated": "2024-04-09 04:48:51.993",
+      "dateUpdated": "2024-04-09 07:14:17.326",
       "progress": 0,
       "config": {
         "editorSetting": {
@@ -148,11 +157,15 @@
         "forms": {}
       },
       "results": {
-        "code": "SUCCESS",
+        "code": "ERROR",
         "msg": [
           {
             "type": "TEXT",
-            "data": "  user_id item_id rating   timestamp\n0       1     296    5.0  1147880044\n1       1     306    3.5  1147868817\n2       1     307    5.0  1147868828\n3       1     665    5.0  1147878820\n"
+            "data": "Exception in thread \"task-result-getter-1\" java.lang.Error: java.lang.InterruptedException\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1155)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat java.lang.Thread.run(Thread.java:748)\nCaused by: java.lang.InterruptedException\n\tat java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)\n\tat java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)\n\tat scala.concurrent.impl.Promise$DefaultPromise.tryAwait(Promise.scala:242)\n\tat scala.concurrent.impl.Promise$DefaultPromise.ready(Promise.scala:258)\n\tat scala.concurrent.impl.Promise$DefaultPromise.result(Promise.scala:263)\n\tat org.apache.spark.util.ThreadUtils$.awaitResult(ThreadUtils.scala:293)\n\tat org.apache.spark.network.BlockTransferService.fetchBlockSync(BlockTransferService.scala:103)\n\tat org.apache.spark.storage.BlockManager.fetchRemoteManagedBuffer(BlockManager.scala:1061)\n\tat org.apache.spark.storage.BlockManager.$anonfun$getRemoteBlock$8(BlockManager.scala:1005)\n\tat scala.Option.orElse(Option.scala:447)\n\tat org.apache.spark.storage.BlockManager.getRemoteBlock(BlockManager.scala:1005)\n\tat org.apache.spark.storage.BlockManager.getRemoteBytes(BlockManager.scala:1143)\n\tat org.apache.spark.scheduler.TaskResultGetter$$anon$3.$anonfun$run$1(TaskResultGetter.scala:88)\n\tat scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)\n\tat org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1996)\n\tat org.apache.spark.scheduler.TaskResultGetter$$anon$3.run(TaskResultGetter.scala:63)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\n\t... 2 more\nException in thread \"task-result-getter-2\" Exception in thread \"task-result-getter-0\" java.lang.Error: java.lang.InterruptedException\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1155)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat java.lang.Thread.run(Thread.java:748)\nCaused by: java.lang.InterruptedException\n\tat java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)\n\tat java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)\n\tat scala.concurrent.impl.Promise$DefaultPromise.tryAwait(Promise.scala:242)\n\tat scala.concurrent.impl.Promise$DefaultPromise.ready(Promise.scala:258)\n\tat scala.concurrent.impl.Promise$DefaultPromise.result(Promise.scala:263)\n\tat org.apache.spark.util.ThreadUtils$.awaitResult(ThreadUtils.scala:293)\n\tat org.apache.spark.network.BlockTransferService.fetchBlockSync(BlockTransferService.scala:103)\n\tat org.apache.spark.storage.BlockManager.fetchRemoteManagedBuffer(BlockManager.scala:1061)\n\tat org.apache.spark.storage.BlockManager.$anonfun$getRemoteBlock$8(BlockManager.scala:1005)\n\tat scala.Option.orElse(Option.scala:447)\n\tat org.apache.spark.storage.BlockManager.getRemoteBlock(BlockManager.scala:1005)\n\tat org.apache.spark.storage.BlockManager.getRemoteBytes(BlockManager.scala:1143)\n\tat org.apache.spark.scheduler.TaskResultGetter$$anon$3.$anonfun$run$1(TaskResultGetter.scala:88)\n\tat scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)\n\tat org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1996)\n\tat org.apache.spark.scheduler.TaskResultGetter$$anon$3.run(TaskResultGetter.scala:63)\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)\n\t... 2 more\nException in thread \"task-result-getter-3\" java.lang.Error: java.lang.InterruptedException\n\tat java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1155)\n\tat java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)\n\tat java.lang.Thread.run(Thread.java:748)\nCaused by: java.lang.InterruptedException\n\tat java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:998)\n\tat java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1304)\n\tat scala.concurrent.impl.Promise$DefaultPromise.tryAwait(Promise.scala:242)\n\tat scala.concurrent.impl.Promise$DefaultPromise.ready(Promise.scala:258)\n\tat scala.concurrent.impl.Promise$DefaultPromise.result(Promise.scala:263)\n\tat org.apache.spark.util.ThreadUtils$.awaitResult(ThreadUtils.scala:293)\n\tat org.apache.spark.network.BlockTransferService.fetchBlockSync(BlockTransferService.scala:103)\n\tat org.apache.spark.storage.BlockManager.fetchRemoteManagedBuffer(BlockManager.scala:1061)\n\tat org.apache.spark.storage.BlockManager.$anonfun$getRemoteBlock$8(BlockManager.scala:1005)\n"
+          },
+          {
+            "type": "TEXT",
+            "data": "Py4JJavaError: An error occurred while calling o100.collectToPython.\n: org.apache.spark.SparkException: Job 4 cancelled because SparkContext was shut down\n\tat org.apache.spark.scheduler.DAGScheduler.$anonfun$cleanUpAfterSchedulerStop$1(DAGScheduler.scala:1085)\n\tat org.apache.spark.scheduler.DAGScheduler.$anonfun$cleanUpAfterSchedulerStop$1$adapted(DAGScheduler.scala:1083)\n\tat scala.collection.mutable.HashSet.foreach(HashSet.scala:79)\n\tat org.apache.spark.scheduler.DAGScheduler.cleanUpAfterSchedulerStop(DAGScheduler.scala:1083)\n\tat org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onStop(DAGScheduler.scala:2463)\n\tat org.apache.spark.util.EventLoop.stop(EventLoop.scala:84)\n\tat org.apache.spark.scheduler.DAGScheduler.stop(DAGScheduler.scala:2369)\n\tat org.apache.spark.SparkContext.$anonfun$stop$12(SparkContext.scala:2069)\n\tat org.apache.spark.util.Utils$.tryLogNonFatalError(Utils.scala:1419)\n\tat org.apache.spark.SparkContext.stop(SparkContext.scala:2069)\n\tat org.apache.zeppelin.spark.BaseSparkScalaInterpreter.close(BaseSparkScalaInterpreter.scala:204)\n\tat org.apache.zeppelin.spark.SparkScala212Interpreter.close(SparkScala212Interpreter.scala:111)\n\tat org.apache.zeppelin.spark.SparkInterpreter.close(SparkInterpreter.java:185)\n\tat org.apache.zeppelin.interpreter.LazyOpenInterpreter.close(LazyOpenInterpreter.java:92)\n\tat org.apache.zeppelin.interpreter.remote.RemoteInterpreterServer$ShutdownThread.run(RemoteInterpreterServer.java:667)\n\tat org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:868)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:2196)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:2217)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:2236)\n\tat org.apache.spark.SparkContext.runJob(SparkContext.scala:2261)\n\tat org.apache.spark.rdd.RDD.$anonfun$collect$1(RDD.scala:1030)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)\n\tat org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)\n\tat org.apache.spark.rdd.RDD.withScope(RDD.scala:414)\n\tat org.apache.spark.rdd.RDD.collect(RDD.scala:1029)\n\tat org.apache.spark.sql.execution.SparkPlan.executeCollect(SparkPlan.scala:390)\n\tat org.apache.spark.sql.Dataset.$anonfun$collectToPython$1(Dataset.scala:3519)\n\tat org.apache.spark.sql.Dataset.$anonfun$withAction$1(Dataset.scala:3687)\n\tat org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$5(SQLExecution.scala:103)\n\tat org.apache.spark.sql.execution.SQLExecution$.withSQLConfPropagated(SQLExecution.scala:163)\n\tat org.apache.spark.sql.execution.SQLExecution$.$anonfun$withNewExecutionId$1(SQLExecution.scala:90)\n\tat org.apache.spark.sql.SparkSession.withActive(SparkSession.scala:775)\n\tat org.apache.spark.sql.execution.SQLExecution$.withNewExecutionId(SQLExecution.scala:64)\n\tat org.apache.spark.sql.Dataset.withAction(Dataset.scala:3685)\n\tat org.apache.spark.sql.Dataset.collectToPython(Dataset.scala:3516)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n\tat sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n\tat sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n\tat java.lang.reflect.Method.invoke(Method.java:498)\n\tat py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)\n\tat py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:357)\n\tat py4j.Gateway.invoke(Gateway.java:282)\n\tat py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)\n\tat py4j.commands.CallCommand.execute(CallCommand.java:79)\n\tat py4j.GatewayConnection.run(GatewayConnection.java:238)\n\tat java.lang.Thread.run(Thread.java:748)\n\n(\u003cclass \u0027py4j.protocol.Py4JJavaError\u0027\u003e, Py4JJavaError(\u0027An error occurred while calling o100.collectToPython.\\n\u0027, JavaObject id\u003do109), \u003ctraceback object at 0x7bc4f6c6b9c0\u003e)"
           }
         ]
       },
@@ -165,7 +178,7 @@
           "group": "spark",
           "values": [
             {
-              "jobUrl": "http://zeppelin.local:4040/jobs/job?id\u003d2"
+              "jobUrl": "http://zeppelin.local:8081/jobs/job?id\u003d4"
             }
           ],
           "interpreterSettingId": "spark"
@@ -175,9 +188,9 @@
       "jobName": "paragraph_1712598904909_1788338325",
       "id": "paragraph_1712598904909_1788338325",
       "dateCreated": "2024-04-08 17:55:04.909",
-      "dateStarted": "2024-04-09 04:48:51.995",
-      "dateFinished": "2024-04-09 04:59:22.884",
-      "status": "FINISHED"
+      "dateStarted": "2024-04-09 07:14:17.329",
+      "dateFinished": "2024-04-09 07:14:26.338",
+      "status": "ERROR"
     },
     {
       "text": "%pyspark\nmovies_desc \u003d spark.read.option(\"header\", True).option(\"delimiter\", \",\").csv(\"/data/ml-25m/movies.csv\")\n",

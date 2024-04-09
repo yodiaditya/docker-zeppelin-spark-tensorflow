@@ -39,41 +39,48 @@ RUN chown -R 1000:1000 ${ZEPPELIN_NOTEBOOK_DIR}
 RUN chmod -R 777 ${ZEPPELIN_NOTEBOOK_DIR}
 
 # Copy the configuration files and requirements.txt
-COPY ./conf ${ZEPPELIN_HOME}/conf
+COPY ./conf/zeppelin-env.sh ${ZEPPELIN_HOME}/conf/zeppelin-env.sh
 COPY ./requirements.txt ${ZEPPELIN_HOME}/requirements.txt
 COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 
 ################## INSTALL MAMBA AND PYTHON 3.9 #################
+### UNCOMMENT THIS TO UPGRADE TO PYTHON 3.9 or OTHERS VERSION
+### When you did this, `shell interpreter` in zeppelin to install any python package since !pip not working anymore.
+### eg: %sh
+###     pip install rankfm
+###
+###
 
-COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
 
-ARG miniforge_version="23.1.0-1"
-ARG miniforge_sha256="cba9a744454039944480871ed30d89e4e51a944a579b461dd9af60ea96560886"
+# COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
 
-RUN set -ex && rm -rf /opt/conda && \
-    wget -nv https://github.com/conda-forge/miniforge/releases/download/${miniforge_version}/Mambaforge-${miniforge_version}-Linux-x86_64.sh -O miniforge.sh && \
-    echo "${miniforge_sha256} miniforge.sh" > miniforge.sha256 && \
-    bash miniforge.sh -b -p /opt/conda && \
-    export PATH=/opt/conda/bin:$PATH && \
-    conda update --yes -n base -c defaults conda && \
-    conda config --set always_yes yes --set changeps1 no && \
-    conda info -a && \
-    conda install mamba -c conda-forge
+# ARG miniforge_version="23.1.0-1"
+# ARG miniforge_sha256="cba9a744454039944480871ed30d89e4e51a944a579b461dd9af60ea96560886"
 
-RUN set -ex && \
-    export PATH=/opt/conda/bin:$PATH && \
-    mamba env update -f env_python_3_with_R.yml --prune && \
-    # Cleanup
-    rm -v miniforge.sh miniforge.sha256  && \
-    \
-    mamba init bash && \
-    echo mamba activate python_3_with_R >> ${ZEPPELIN_HOME}/.bashrc && \
-    echo mamba activate python_3_with_R >> /root/.bashrc && \
-    \
-    # Cleanup
-    find /opt/conda/ -follow -type f -name '*.a' -delete && \
-    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
-    mamba clean -ay
+# RUN set -ex && rm -rf /opt/conda && \
+#     wget -nv https://github.com/conda-forge/miniforge/releases/download/${miniforge_version}/Mambaforge-${miniforge_version}-Linux-x86_64.sh -O miniforge.sh && \
+#     echo "${miniforge_sha256} miniforge.sh" > miniforge.sha256 && \
+#     bash miniforge.sh -b -p /opt/conda && \
+#     export PATH=/opt/conda/bin:$PATH && \
+#     conda update --yes -n base -c defaults conda && \
+#     conda config --set always_yes yes --set changeps1 no && \
+#     conda info -a && \
+#     conda install mamba -c conda-forge
+
+# RUN set -ex && \
+#     export PATH=/opt/conda/bin:$PATH && \
+#     mamba env update -f env_python_3_with_R.yml --prune && \
+#     # Cleanup
+#     rm -v miniforge.sh miniforge.sha256  && \
+#     \
+#     mamba init bash && \
+#     echo mamba activate python_3_with_R >> ${ZEPPELIN_HOME}/.bashrc && \
+#     echo mamba activate python_3_with_R >> /root/.bashrc && \
+#     \
+#     # Cleanup
+#     find /opt/conda/ -follow -type f -name '*.a' -delete && \
+#     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+#     mamba clean -ay
 
 ENV PATH="/opt/conda/envs/python_3_with_R/bin:/opt/conda:bin:/opt/conda/condabin:$PATH"
 
