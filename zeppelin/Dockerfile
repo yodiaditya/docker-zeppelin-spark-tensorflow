@@ -1,12 +1,15 @@
 FROM apache/zeppelin:0.10.1
 
-ENV ZEPPELIN_HOME=/opt/zeppelin
-ENV ZEPPELIN_NOTEBOOK_DIR /notebooks
 ENV SPARK_HOME /opt/bitnami/spark
 
 ENV TZ=UTC \
     DEBIAN_FRONTEND=noninteractive
-ENV ZEPPELIN_LOG_DIR=opt/zeppeli/logs
+
+ENV ZEPPELIN_INTERPRETER_DEP_MVNREPO="https://repo1.maven.org/maven2"
+ENV ZEPPELIN_HOME=/opt/zeppelin
+ENV ZEPPELIN_NOTEBOOK_DIR /notebooks
+ENV ZEPPELIN_ADDR 0.0.0.0
+ENV ZEPPELIN_LOG_DIR=/opt/zeppelin/logs
 
 USER root
 
@@ -40,12 +43,50 @@ COPY ./conf ${ZEPPELIN_HOME}/conf
 COPY ./requirements.txt ${ZEPPELIN_HOME}/requirements.txt
 COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 
+################## INSTALL MAMBA AND PYTHON 3.9 #################
+
+COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
+
+ARG miniforge_version="23.1.0-1"
+ARG miniforge_sha256="cba9a744454039944480871ed30d89e4e51a944a579b461dd9af60ea96560886"
+
+RUN set -ex && rm -rf /opt/conda && \
+    wget -nv https://github.com/conda-forge/miniforge/releases/download/${miniforge_version}/Mambaforge-${miniforge_version}-Linux-x86_64.sh -O miniforge.sh && \
+    echo "${miniforge_sha256} miniforge.sh" > miniforge.sha256 && \
+    bash miniforge.sh -b -p /opt/conda && \
+    export PATH=/opt/conda/bin:$PATH && \
+    conda update --yes -n base -c defaults conda && \
+    conda config --set always_yes yes --set changeps1 no && \
+    conda info -a && \
+    conda install mamba -c conda-forge
+
+RUN set -ex && \
+    export PATH=/opt/conda/bin:$PATH && \
+    mamba env update -f env_python_3_with_R.yml --prune && \
+    # Cleanup
+    rm -v miniforge.sh miniforge.sha256  && \
+    \
+    mamba init bash && \
+    echo mamba activate python_3_with_R >> ${ZEPPELIN_HOME}/.bashrc && \
+    echo mamba activate python_3_with_R >> /root/.bashrc && \
+    \
+    # Cleanup
+    find /opt/conda/ -follow -type f -name '*.a' -delete && \
+    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+    mamba clean -ay
+
+ENV PATH="/opt/conda/envs/python_3_with_R/bin:/opt/conda:bin:/opt/conda/condabin:$PATH"
+
+# RUN set -ex && pip install -q -r requirements.txt
+ENV PATH=/opt/zeppelin/.local/bin:$PATH
+
+###################### END MAMBA AND PYTHON 3.9 ######################
+
 ################# CUDA INSTALLATION #################
-# COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE CUDA 
+# UNCOMMENT THIS FOR CUDA INSTALLATION
+# ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO `zeppelin/cuda`
 
-# ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO THE zeppelin/cuda FOLDER
-
-# # CUDA Installation
+# # Copy from host `/zeppelin/cuda` to Docker `/opt/zeppelin/cuda`
 # COPY ./cuda ${ZEPPELIN_HOME}/cuda
 # RUN chmod a+x cuda/cuda_11.8.0_520.61.05_linux.run
 # RUN cuda/cuda_11.8.0_520.61.05_linux.run --silent --toolkit
@@ -67,29 +108,6 @@ COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 
 ################# End Install CUDA #################
 
-################## INSTALL MAMBA AND PYTHON 3.9 #################
-
-# COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
-
-# RUN conda update --all && \
-#     conda install mamba -c conda-forge && \
-#     mamba remove -n python_3_with_R --all -y && \
-#     mamba env update -f ${ZEPPELIN_HOME}/env_python_3_with_R.yml --prune && \
-#     # Cleanup based on https://github.com/ContinuumIO/docker-images/commit/cac3352bf21a26fa0b97925b578fb24a0fe8c383
-#     find /opt/conda/ -follow -type f -name '*.a' -delete && \
-#     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
-#     mamba clean -ay
-#     # Allow to modify conda packages. This allows malicious code to be injected into other interpreter sessions, therefore it is disabled by default
-#     # chmod -R ug+rwX /opt/conda
-
-ENV PATH /opt/conda/envs/python_3_with_R/bin:/opt/conda/bin:$PATH
-ENV PATH=/opt/zeppelin/.local/bin:$PATH
-###################### END MAMBA AND PYTHON 3.9 ######################
-
-# Setup conda and auto load environment `python_3_with_R` whenever login 
-COPY ./bashrc ${ZEPPELIN_HOME}/.bashrc
-RUN chown 1000:1000 ${ZEPPELIN_HOME}/.bashrc
-
 # Copy pip-cache folder from host to Docker
 # Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
 # COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
@@ -99,10 +117,11 @@ RUN chown 1000:1000 ${ZEPPELIN_HOME}/.bashrc
 USER 1000
 
 # Install the required packages. You can modify the requirements.txt file to include the packages you need.
-# At first run, you can run the following command to install the packages
-# the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
 
+# UN-COMMENT THIS FOR FIRST TIME PIP INSTALL
 # RUN mkdir -p ${ZEPPELIN_HOME}/pip-cache
+
+# the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
 # RUN pip install --cache-dir pip-cache -r requirements.txt
 
 ################## Install TFX #################
