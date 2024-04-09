@@ -9,7 +9,6 @@ ENV ZEPPELIN_INTERPRETER_DEP_MVNREPO="https://repo1.maven.org/maven2"
 ENV ZEPPELIN_HOME=/opt/zeppelin
 ENV ZEPPELIN_NOTEBOOK_DIR /notebooks
 ENV ZEPPELIN_ADDR 0.0.0.0
-ENV ZEPPELIN_LOG_DIR=/opt/zeppelin/logs
 
 USER root
 
@@ -49,8 +48,7 @@ COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 ### eg: %sh
 ###     pip install rankfm
 ###
-###
-
+#####################################################################
 
 # COPY ./env_python_3_with_R.yml ${ZEPPELIN_HOME}/env_python_3_with_R.yml
 
@@ -82,7 +80,7 @@ COPY ./tfx_requirements.txt ${ZEPPELIN_HOME}/tfx_requirements.txt
 #     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
 #     mamba clean -ay
 
-ENV PATH="/opt/conda/envs/python_3_with_R/bin:/opt/conda:bin:/opt/conda/condabin:$PATH"
+ENV PATH="/opt/conda/envs/python_3_with_R/bin:/opt/conda/conda/bin:$PATH"
 
 # RUN set -ex && pip install -q -r requirements.txt
 ENV PATH=/opt/zeppelin/.local/bin:$PATH
@@ -90,10 +88,10 @@ ENV PATH=/opt/zeppelin/.local/bin:$PATH
 ###################### END MAMBA AND PYTHON 3.9 ######################
 
 ################# CUDA INSTALLATION #################
-# UNCOMMENT THIS FOR CUDA INSTALLATION
-# ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO `zeppelin/cuda`
+### UNCOMMENT THIS FOR CUDA INSTALLATION
+### ENSURE TO COPY THE cuda_11.8.0_520.61.05_linux.run and cudnn INTO `zeppelin/cuda`
 
-# # Copy from host `/zeppelin/cuda` to Docker `/opt/zeppelin/cuda`
+# Copy from host `/zeppelin/cuda` to Docker `/opt/zeppelin/cuda`
 # COPY ./cuda ${ZEPPELIN_HOME}/cuda
 # RUN chmod a+x cuda/cuda_11.8.0_520.61.05_linux.run
 # RUN cuda/cuda_11.8.0_520.61.05_linux.run --silent --toolkit
@@ -115,8 +113,9 @@ ENV PATH=/opt/zeppelin/.local/bin:$PATH
 
 ################# End Install CUDA #################
 
-# Copy pip-cache folder from host to Docker
-# Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
+## Copy pip-cache folder from host to Docker
+## Instead of project folder, it using zeppelin folder as parent directory (Docker: context . )
+
 # COPY ./pip-cache ${ZEPPELIN_HOME}/pip-cache
 # RUN chown -R 1000:1000 ${ZEPPELIN_HOME}/pip-cache
 
@@ -125,16 +124,16 @@ USER 1000
 
 # Install the required packages. You can modify the requirements.txt file to include the packages you need.
 
-# UN-COMMENT THIS FOR FIRST TIME PIP INSTALL
+# # UN-COMMENT THIS FOR FIRST TIME PIP INSTALL
 # RUN mkdir -p ${ZEPPELIN_HOME}/pip-cache
 
-# the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
+# # the pip-cache can be copied from Docker to the zeppelin folder with name `pip-cache`
 # RUN pip install --cache-dir pip-cache -r requirements.txt
 
 ################## Install TFX #################
 ## COMMENT THIS LINE UNTIL END INSTALLATION IF YOU DON'T NEED TO USE TFX 
 
-# # Install TFX
+# ## Install TFX
 # RUN pip install --cache-dir pip-cache -r tfx_requirements.txt
 # RUN pip uninstall shapely -y
 # RUN rm -rf pip-cache
